@@ -13,6 +13,38 @@ spec:
         - fromFieldPath: metadata.labels
           toFieldPath: metadata.labels
   resources:
+    - name: postgres-instance
+      base:
+        apiVersion: rds.aws.upbound.io/v1beta1
+        kind: ClusterInstance
+        metadata:
+          name: example
+        spec:
+          forProvider:
+            region: << .config.rds.primary.region >>
+            applyImmediately: << .config.rds.postgres.applyImmediately >>
+            autoMinorVersionUpgrade: << .config.rds.postgres.autoMinorVersionUpgrade >>
+            clusterIdentifierRef:
+              name: "" #todo
+            engine: << .config.rds.postgres.engine >>
+            engineMode: << .config.rds.postgres.engineMode >> 
+            engineVersion: "<< .config.rds.postgres.engineVersion >>" 
+            copyTagsToSnapshot: true
+            identifier: "" #todo
+            instanceClass: << .config.rds.postgres.dbClusterInstanceClass >>
+            dbParameterGroupName: postgres-parameter-group-v1beta1-<< .config.rds.primary.region >>
+            dbSubnetGroupNameRef: postgres-dbsubnetgroup-v1beta1-<< .config.rds.primary.region >>
+            performanceInsightsEnabled: << .config.rds.postgres.performanceInsightsEnabled >>
+            preferredBackupWindow: << .config.rds.postgres.preferredBackupWindow >> #The daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter.Time in UTC.
+            preferredMaintenanceWindow: << .config.rds.postgres.preferredMaintenanceWindow >> #The weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
+        patches:
+          - type: PatchSet
+            patchSetName: metadata
+          - fromFieldPath: spec.engineVersion
+            toFieldPath: spec.forProvider.engineVersion
+          - fromFieldPath: spec.dbClusterInstanceClass
+            toFieldPath: spec.forProvider.dbClusterInstanceClass
+
     - name: postgres-cluster
       base:
         apiVersion: rds.aws.upbound.io/v1beta1
@@ -29,14 +61,14 @@ spec:
             backupRetentionPeriod: << .config.rds.postgres.backupRetentionPeriod >> # The days to retain backups for. Default 1
             clusterMembers: # List of RDS Instances that are a part of this cluster
               - pe-example-import-0 #todo
-              - pe-example-import-1
+              - pe-example-import-1 
             copyTagsToSnapshot: true # Copy all Cluster tags to snapshots. Default is false.
             databaseName: << .config.rds.postgres.databaseName >> #Name for an automatically created database on cluster creation.
             dbClusterInstanceClass: << .config.rds.postgres.dbClusterInstanceClass >> # The compute and memory capacity of each DB instance in the Multi-AZ DB cluster, for example db.m6g.xlarge.
             dbClusterParameterGroupName: postgres-cluster-parameter-group-v1beta1-<< .config.rds.primary.region >> #A cluster parameter group to associate with the cluster.
             dbInstanceParameterGroupName: postgres-parameter-group-v1beta1-<< .config.rds.primary.region >> # Instance parameter group to associate with all instances of the DB cluster. The db_instance_parameter_group_name parameter is only valid in combination with the allow_major_version_upgrade parameter.
             dbSubnetGroupNameRef: postgres-dbsubnetgroup-v1beta1-<< .config.rds.primary.region >> #A DB subnet group to associate with this DB instance. 
-            deletionProtection: << .config.rds.postgres.deletionProtection >> # #param
+            deletionProtection: << .config.rds.postgres.deletionProtection >>
             enabledCloudwatchLogsExports: #Set of log types to export to cloudwatch. If omitted, no logs will be exported. The following log types are supported: audit, error, general, slowquery, postgresql (PostgreSQL).
               - postgresql
             engine: << .config.rds.postgres.engine >> # The name of the database engine to be used for this DB cluster. Defaults to aurora. Valid Values: aurora, aurora-mysql, aurora-postgresql, mysql, postgres. (Note that mysql and postgres are Multi-AZ RDS clusters).
@@ -55,7 +87,7 @@ spec:
             preferredMaintenanceWindow: << .config.rds.postgres.preferredMaintenanceWindow >> #The weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
             region: << .config.rds.primary.region >>
             storageEncrypted: true # Specifies whether the DB cluster is encrypted. The default is false for provisioned engine_mode and true for serverless engine_mode. When restoring an unencrypted snapshot_identifier, the kms_key_id argument must be provided to encrypt the restored cluster.
-            skipFinalSnapshot: << .config.rds.postgres.skipFinalSnapshot >> #param
+            skipFinalSnapshot: << .config.rds.postgres.skipFinalSnapshot >>
           providerConfigRef:
             name: default
         patches:

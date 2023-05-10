@@ -42,6 +42,7 @@ rds:
     databaseName: postgres
     allocatedStorage: 1
     allowMajorVersionUpgrade: false
+    autoMinorVersionUpgrade: false
     applyImmediately: false
     backupRetentionPeriod: 3
     deletionProtection: false
@@ -52,6 +53,7 @@ rds:
     dbClusterInstanceClass: db.r5.large
     preferredBackupWindow: 12:00-13:00
     preferredMaintenanceWindow: wed:10:00-wed:11:00
+    performanceInsightsEnabled: false
     masterUsername: dbadmin
     masterPasswordSecretRef:
       key: password
