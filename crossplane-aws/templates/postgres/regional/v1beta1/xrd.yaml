@@ -28,6 +28,8 @@ spec:
                 type: string
               engineVersion:
                 type: string
+              parameterGroupFamily:
+                type: string  
               skipFinalSnapshot:
                 type: boolean
               deletionProtection:
@@ -38,6 +40,7 @@ spec:
               required:
                 - datbaseName
                 - engineVersion
+                - parameterGroupFamily
                 - skipFinalSnapshot
                 - deletionProtection
                 - dbClusterInstanceClass

@@ -8,6 +8,7 @@ metadata:
 spec:
   datbaseName: postgres
   engineVersion: "14.6"
+  parameterGroupFamily: aurora-postgresql14
   skipFinalSnapshot: true
   deletionProtection: false
   dbClusterInstanceClass: db.r5.large

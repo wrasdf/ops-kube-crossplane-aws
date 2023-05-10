@@ -13,6 +13,42 @@ spec:
         - fromFieldPath: metadata.labels
           toFieldPath: metadata.labels
   resources:
+    - name: postgres-cluster-parameter-group
+      base:
+        apiVersion: rds.aws.upbound.io/v1beta1
+        kind: ClusterParameterGroup
+        spec:
+          forProvider:
+            region: << .config.rds.primary.region >>
+            family: << .config.rds.postgres.family >>
+            parameter:
+              - name: rds.force_ssl
+                value: 1
+              - applyMethod: pending-reboot
+                name: rds.logical_replication
+                value: 1
+        patches:
+          - type: PatchSet
+            patchSetName: metadata
+          - fromFieldPath: spec.parameterGroupFamily
+            toFieldPath: spec.forProvider.family
+    - name: postgres-parameter-group
+      base:
+        apiVersion: rds.aws.upbound.io/v1beta1
+        kind: ParameterGroup
+        spec:
+          forProvider:
+            region: << .config.rds.primary.region >>
+            family: << .config.rds.postgres.family >>
+            parameter:
+              - applyMethod: pending-reboot
+                name: shared_preload_libraries
+                value: pg_stat_statements,pgaudit
+        patches:
+          - type: PatchSet
+            patchSetName: metadata
+          - fromFieldPath: spec.parameterGroupFamily
+            toFieldPath: spec.forProvider.family
     - name: postgres-instance
       base:
         apiVersion: rds.aws.upbound.io/v1beta1
@@ -44,7 +80,6 @@ spec:
             toFieldPath: spec.forProvider.engineVersion
           - fromFieldPath: spec.dbClusterInstanceClass
             toFieldPath: spec.forProvider.dbClusterInstanceClass
-
     - name: postgres-cluster
       base:
         apiVersion: rds.aws.upbound.io/v1beta1
@@ -60,13 +95,13 @@ spec:
             applyImmediately: << .config.rds.postgres.applyImmediately >> #The target backtrack window, in seconds. Only available for aurora and aurora-mysql engines currently.  Defaults to 0. Must be between 0 and 259200 (72 hours)
             backupRetentionPeriod: << .config.rds.postgres.backupRetentionPeriod >> # The days to retain backups for. Default 1
             clusterMembers: # List of RDS Instances that are a part of this cluster
-              - pe-example-import-0 #todo
-              - pe-example-import-1 
+              - pe-example-import-0 #TODO
+              - pe-example-import-1 #TODO
             copyTagsToSnapshot: true # Copy all Cluster tags to snapshots. Default is false.
             databaseName: << .config.rds.postgres.databaseName >> #Name for an automatically created database on cluster creation.
             dbClusterInstanceClass: << .config.rds.postgres.dbClusterInstanceClass >> # The compute and memory capacity of each DB instance in the Multi-AZ DB cluster, for example db.m6g.xlarge.
-            dbClusterParameterGroupName: postgres-cluster-parameter-group-v1beta1-<< .config.rds.primary.region >> #A cluster parameter group to associate with the cluster.
-            dbInstanceParameterGroupName: postgres-parameter-group-v1beta1-<< .config.rds.primary.region >> # Instance parameter group to associate with all instances of the DB cluster. The db_instance_parameter_group_name parameter is only valid in combination with the allow_major_version_upgrade parameter.
+            dbClusterParameterGroupName: #TODO #A cluster parameter group to associate with the cluster.
+            dbInstanceParameterGroupName: #TODO # Instance parameter group to associate with all instances of the DB cluster. The db_instance_parameter_group_name parameter is only valid in combination with the allow_major_version_upgrade parameter.
             dbSubnetGroupNameRef: postgres-dbsubnetgroup-v1beta1-<< .config.rds.primary.region >> #A DB subnet group to associate with this DB instance. 
             deletionProtection: << .config.rds.postgres.deletionProtection >>
             enabledCloudwatchLogsExports: #Set of log types to export to cloudwatch. If omitted, no logs will be exported. The following log types are supported: audit, error, general, slowquery, postgresql (PostgreSQL).
