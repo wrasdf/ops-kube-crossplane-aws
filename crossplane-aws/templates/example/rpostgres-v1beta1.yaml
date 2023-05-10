@@ -1,0 +1,13 @@
+---
+apiVersion: aws.v1beta1.afterpay.cloud/v1beta1
+kind: RPostgres
+metadata:
+  name: rpostgres-deleteme-v1
+  labels:
+    version: v1beta1
+spec:
+  datbaseName: postgres
+  engineVersion: "14.6"
+  skipFinalSnapshot: true
+  deletionProtection: false
+  dbClusterInstanceClass: db.r5.large

@@ -1,0 +1,13 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: regional-mysql.aws.v1beta1.afterpay
+spec:
+  writeConnectionSecretsToNamespace: upbound-system
+  compositeTypeRef:
+    apiVersion: aws.v1beta1.afterpay/v1beta1
+    kind: XRMysql
+  resources:
+    - name: ""
+      base:
+        

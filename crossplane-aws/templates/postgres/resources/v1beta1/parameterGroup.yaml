@@ -1,0 +1,39 @@
+---
+apiVersion: rds.aws.upbound.io/v1beta1
+kind: ClusterParameterGroup
+metadata:
+  name: postgres-cluster-parameter-group-v1beta1-<< .config.rds.primary.region >>
+  label:
+    provider: aws
+    region: << .config.rds.primary.region >>
+    version: v1beta1
+spec:
+  forProvider:
+    region: << .config.rds.primary.region >>
+    description: RDS default postgres cluster parameter group
+    family: << .config.rds.postgres.family >>
+    parameter:
+      - name: rds.force_ssl
+        value: 1
+      - applyMethod: pending-reboot
+        name: rds.logical_replication
+        value: 1
+
+---
+apiVersion: rds.aws.upbound.io/v1beta1
+kind: ParameterGroup
+metadata:
+  name: postgres-parameter-group-v1beta1-<< .config.rds.primary.region >>
+  label:
+    provider: aws
+    region: << .config.rds.primary.region >>
+    version: v1beta1
+spec:
+  forProvider:
+    region: << .config.rds.primary.region >>
+    description: RDS default postgres instance parameter group
+    family: << .config.rds.postgres.family >>
+    parameter:
+      - applyMethod: pending-reboot
+        name: shared_preload_libraries
+        value: pg_stat_statements,pgaudit
