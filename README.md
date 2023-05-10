@@ -10,3 +10,6 @@
 
 - As a developer, I would like to create a global mysql aurora cluster.
 
+#### Command
+
+- ./bin/compile.sh alpha-usea1-v1
