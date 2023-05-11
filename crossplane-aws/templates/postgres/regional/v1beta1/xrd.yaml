@@ -2,7 +2,7 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: CompositeResourceDefinition
 metadata:
-  name: rpostgres.aws.v1beta1.afterpay.cloud
+  name: xrpostgres.aws.v1beta1.afterpay.cloud
   labels:
     version: v1beta1
 spec:

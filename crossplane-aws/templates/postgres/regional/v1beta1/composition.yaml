@@ -2,7 +2,7 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: rpostgres.aws.v1beta1.afterpay.cloud
+  name: xrpostgres.aws.v1beta1.afterpay.cloud
 spec:
   writeConnectionSecretsToNamespace: upbound-system
   compositeTypeRef:

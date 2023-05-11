@@ -2,7 +2,7 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: rmysql.aws.v1beta1.afterpay.cloud
+  name: xrmysql.aws.v1beta1.afterpay.cloud
 spec:
   writeConnectionSecretsToNamespace: upbound-system
   compositeTypeRef:
@@ -87,12 +87,12 @@ spec:
             applyImmediately: << .config.rds.mysql.applyImmediately >>
             autoMinorVersionUpgrade: << .config.rds.mysql.autoMinorVersionUpgrade >>
             clusterIdentifierRef:
-              name: "" #TODO
+              name: mysql-cluster #TODO
             engine: << .config.rds.mysql.engine >>
             engineMode: << .config.rds.mysql.engineMode >> 
             engineVersion: "<< .config.rds.mysql.engineVersion >>" 
             copyTagsToSnapshot: true
-            identifier: "" #TODO
+            identifier: mysql-instances-0 #TODO
             instanceClass: << .config.rds.mysql.dbClusterInstanceClass >>
             dbParameterGroupName: mysql-parameter-group #TODO
             dbSubnetGroupNameRef: mysql-dbsubnetgroup-v1beta1-<< .config.rds.primary.region >>
@@ -119,10 +119,12 @@ spec:
           - fromFieldPath: spec.applyImmediately
             toFieldPath: spec.forProvider.applyImmediately
 
-    - name: postgres-cluster
+    - name: mysql-cluster
       base:
         apiVersion: rds.aws.upbound.io/v1beta1
         kind: Cluster
+        metadata:
+          name: mysql-cluster
         spec:
           forProvider:
             allocatedStorage: << .config.rds.mysql.allocatedStorage >> #The amount of storage in gibibytes (GiB) to allocate to each DB instance in the Multi-AZ DB cluster. 
@@ -143,7 +145,10 @@ spec:
             dbSubnetGroupNameRef: mysql-dbsubnetgroup-v1beta1-<< .config.rds.primary.region >> #A DB subnet group to associate with this DB instance. 
             deletionProtection: << .config.rds.mysql.deletionProtection >>
             enabledCloudwatchLogsExports: #Set of log types to export to cloudwatch. If omitted, no logs will be exported. The following log types are supported: audit, error, general, slowquery, postgresql (PostgreSQL).
-              - postgresql #TODO
+              - audit
+              - error
+              - general
+              - slowquery
             engine: << .config.rds.mysql.engine >> # The name of the database engine to be used for this DB cluster. Defaults to aurora. Valid Values: aurora, aurora-mysql, aurora-postgresql, mysql, postgres. (Note that mysql and postgres are Multi-AZ RDS clusters).
             engineMode: << .config.rds.mysql.engineMode >> # The database engine mode. Valid values: global (only valid for Aurora MySQL 1.21 and earlier), multimaster, parallelquery, provisioned, serverless. Defaults to: provisioned. See the RDS User Guide for limitations when using serverless.
             engineVersion: "<< .config.rds.mysql.engineVersion >>" # The database engine version. Updating this argument results in an outage. See the Aurora MySQL and Aurora Postgres documentation for your configured engine to determine this value. For example with Aurora MySQL 2, a potential value for this argument is 5.7.mysql_aurora.2.03.2. The value can contain a partial version where supported by the API. The actual engine version used is returned in the attribute engine_version_actual, , see Attributes Reference below.
