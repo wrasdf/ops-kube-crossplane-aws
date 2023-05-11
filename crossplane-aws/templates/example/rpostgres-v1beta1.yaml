@@ -2,7 +2,7 @@
 apiVersion: aws.v1beta1.afterpay.cloud/v1beta1
 kind: RPostgres
 metadata:
-  name: rpostgres-deleteme-v1
+  name: regional-postgres-deleteme-v1
   labels:
     version: v1beta1
 spec:
@@ -12,3 +12,4 @@ spec:
   skipFinalSnapshot: true
   deletionProtection: false
   dbClusterInstanceClass: db.r5.large
+  instance_count: 2 #### How ?

@@ -1,0 +1,27 @@
+---
+apiVersion: aws.v1beta1.afterpay.cloud/v1beta1
+kind: GPostgres
+metadata:
+  name: global-postgres-deleteme-v1
+  labels:
+    version: v1beta1
+spec:
+  datbaseName: postgres
+  engineVersion: "14.6"
+  parameterGroupFamily: aurora-postgresql14
+  skipFinalSnapshot: true
+  deletionProtection: false
+  dbClusterInstanceClass: db.r5.large
+  repicas:
+    - name: spse2
+      type: primary
+      instance_count: 2
+    - name: apse1
+      type: repica
+      instance_count: 1
+    - name: usea1
+      type: repica
+      instance_count: 1
+    - name: uswe2
+      type: repica
+      instance_count: 1  
