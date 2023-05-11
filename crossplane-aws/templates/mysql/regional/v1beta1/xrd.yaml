@@ -35,7 +35,7 @@ spec:
                 dbClusterInstanceClass:
                   type: string
                 dbInstanceCount:
-                  type: number  
+                  type: number
                 required:
                   - datbaseName
                   - engineVersion
@@ -45,8 +45,8 @@ spec:
                   - dbInstanceCount
                 x-kubernetes-preserve-unknown-fields: true
             status:
-              description: Status defines the observed state
               type: object
+              description: Status defines the observed state
               properties:
                 outputs:
                   description: Freeform field containing status information for regional mysql
