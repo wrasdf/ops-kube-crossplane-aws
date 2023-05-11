@@ -3,6 +3,7 @@ apiVersion: aws.v1beta1.afterpay.cloud/v1beta1
 kind: RMysql
 metadata:
   name: regional-mysql-deleteme-v1
+  namespace: pe
   labels:
     version: v1beta1
 spec:
@@ -19,6 +20,7 @@ apiVersion: aws.v1beta1.afterpay.cloud/v1beta1
 kind: RMysql
 metadata:
   name: regional-mysql-deleteme-v1
+  namespace: pe
   labels:
     version: v1beta1
 spec:

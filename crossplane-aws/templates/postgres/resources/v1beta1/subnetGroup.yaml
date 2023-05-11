@@ -4,7 +4,7 @@ apiVersion: rds.aws.upbound.io/v1beta1
 kind: SubnetGroup
 metadata:
   name: postgres-dbsubnetgroup-<< $value.region >>
-  label:
+  labels:
     provider: aws
     region: << $value.region >>
     version: v1beta1

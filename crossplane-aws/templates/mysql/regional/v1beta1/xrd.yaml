@@ -14,41 +14,41 @@ spec:
     kind: RMysql
     plural: rmysql
   versions:
-  - name: v1beta1
-    served: true
-    referenceable: true
-    schema:
-      openAPIV3Schema:
-        type: object
-        properties:
-          spec:
-            type: object
-            properties:
-              datbaseName:
-                type: string
-              engineVersion:
-                type: string
-              parameterGroupFamily:
-                type: string  
-              deletionProtection:
-                type: boolean
-              dbClusterInstanceClass:
-                type: string
-              dbInstanceCount:
-                type: number  
-              required:
-                - datbaseName
-                - engineVersion
-                - parameterGroupFamily
-                - deletionProtection
-                - dbClusterInstanceClass
-                - dbInstanceCount
-              x-kubernetes-preserve-unknown-fields: true
-          status:
-            description: Status defines the observed state
-            type: object
-            properties:
-              outputs:
-                description: Freeform field containing status information for regional mysql
-                type: object
+    - name: v1beta1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                datbaseName:
+                  type: string
+                engineVersion:
+                  type: string
+                parameterGroupFamily:
+                  type: string  
+                deletionProtection:
+                  type: boolean
+                dbClusterInstanceClass:
+                  type: string
+                dbInstanceCount:
+                  type: number  
+                required:
+                  - datbaseName
+                  - engineVersion
+                  - parameterGroupFamily
+                  - deletionProtection
+                  - dbClusterInstanceClass
+                  - dbInstanceCount
                 x-kubernetes-preserve-unknown-fields: true
+            status:
+              description: Status defines the observed state
+              type: object
+              properties:
+                outputs:
+                  description: Freeform field containing status information for regional mysql
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
