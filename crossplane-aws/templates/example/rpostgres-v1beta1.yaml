@@ -13,7 +13,7 @@ spec:
   dbClusterInstanceClass: db.r5.large
   dbInstanceCount: 2 #### How ?
 
-### Full 
+### Full Example
 ---
 apiVersion: aws.v1beta1.afterpay.cloud/v1beta1
 kind: RPostgres

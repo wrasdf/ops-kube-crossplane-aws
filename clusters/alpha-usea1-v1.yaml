@@ -39,12 +39,12 @@ rds:
         - eu-west-1c
       kmsKeyId: arn:aws:kms:eu-west-1:568431661506:key/ce30efba-2e73-474b-8e9f-069d4e948dc2  
   postgres:
-    databaseName: postgres
     allocatedStorage: 1
     allowMajorVersionUpgrade: false
     autoMinorVersionUpgrade: false
     applyImmediately: false
     backupRetentionPeriod: 3
+    databaseName: postgres
     deletionProtection: false
     engine: aurora-postgresql
     engineMode: provisioned
@@ -62,8 +62,25 @@ rds:
     port: 5432
     skipFinalSnapshot: true
   mysql:
+    allocatedStorage: 1
+    allowMajorVersionUpgrade: false
+    autoMinorVersionUpgrade: false
+    applyImmediately: false
+    backupRetentionPeriod: 3
+    databaseName: mysql
+    deletionProtection: false
+    engine: aurora-mysql
     engineMode: provisioned
     engineVersion: "8.0"
     family: aurora-mysql8.0
-
-
+    dbClusterInstanceClass: db.r5.large
+    preferredBackupWindow: 12:00-13:00
+    preferredMaintenanceWindow: wed:10:00-wed:11:00
+    performanceInsightsEnabled: false
+    masterUsername: dbadmin
+    masterPasswordSecretRef:
+      key: password
+      name: rpostgres-dbadmin
+      namespace: upbound-system
+    port: 3306
+    skipFinalSnapshot: true

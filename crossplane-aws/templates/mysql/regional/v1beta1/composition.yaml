@@ -1,13 +1,195 @@
+---
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: regional-mysql.aws.v1beta1.afterpay
+  name: rmysql.aws.v1beta1.afterpay.cloud
 spec:
   writeConnectionSecretsToNamespace: upbound-system
   compositeTypeRef:
-    apiVersion: aws.v1beta1.afterpay/v1beta1
+    apiVersion: aws.v1beta1.afterpay.cloud/v1beta1
     kind: XRMysql
+  patchSets:
+    - name: metadata
+      patches:
+        - fromFieldPath: metadata.labels
+          toFieldPath: metadata.labels
   resources:
-    - name: ""
+    - name: mysql-cluster-parameter-group
       base:
-        
+        apiVersion: rds.aws.upbound.io/v1beta1
+        kind: ClusterParameterGroup
+        metedata:
+          name: mysql-cluster-parameter-group
+        spec:
+          forProvider:
+            region: << .config.rds.primary.region >>
+            family: << .config.rds.mysql.family >>
+            parameter:
+              - name: character_set_server
+                value: utf8
+              - name: character_set_client
+                value: utf8
+              - name: time_zone
+                value: UTC
+              - name: character_set_connection
+                value: utf8
+              - name: character_set_database
+                value: utf8
+              - name: character_set_results
+                value: utf8
+              - name: binlog_format
+                value: ROW
+                applyMethod: pending-reboot
+              - name: server_audit_logging
+                value: '1'
+              - name: server_audit_logs_upload
+                value: '1'
+              - name: server_audit_events
+                value: CONNECT,QUERY_DCL,QUERY_DDL
+        patches:
+          - type: PatchSet
+            patchSetName: metadata
+          - fromFieldPath: spec.parameterGroupFamily
+            toFieldPath: spec.forProvider.family
+            policy:
+              fromFieldPath: Required
+
+    - name: mysql-parameter-group
+      base:
+        apiVersion: rds.aws.upbound.io/v1beta1
+        kind: ParameterGroup
+        metedata:
+          name: mysql-parameter-group
+        spec:
+          forProvider:
+            region: << .config.rds.primary.region >>
+            family: << .config.rds.mysql.family >>
+            parameter:
+              - name: "max_connections"
+                value: "1000"
+        patches:
+          - type: PatchSet
+            patchSetName: metadata
+          - fromFieldPath: spec.parameterGroupFamily
+            toFieldPath: spec.forProvider.family
+            policy:
+              fromFieldPath: Required
+
+    - name: mysql-instance
+      base:
+        apiVersion: rds.aws.upbound.io/v1beta1
+        kind: ClusterInstance
+        metadata:
+          name: mysql-instances-0
+        spec:
+          forProvider:
+            region: << .config.rds.primary.region >>
+            applyImmediately: << .config.rds.mysql.applyImmediately >>
+            autoMinorVersionUpgrade: << .config.rds.mysql.autoMinorVersionUpgrade >>
+            clusterIdentifierRef:
+              name: "" #TODO
+            engine: << .config.rds.mysql.engine >>
+            engineMode: << .config.rds.mysql.engineMode >> 
+            engineVersion: "<< .config.rds.mysql.engineVersion >>" 
+            copyTagsToSnapshot: true
+            identifier: "" #TODO
+            instanceClass: << .config.rds.mysql.dbClusterInstanceClass >>
+            dbParameterGroupName: mysql-parameter-group #TODO
+            dbSubnetGroupNameRef: mysql-dbsubnetgroup-v1beta1-<< .config.rds.primary.region >>
+            performanceInsightsEnabled: << .config.rds.mysql.performanceInsightsEnabled >>
+            preferredBackupWindow: << .config.rds.mysql.preferredBackupWindow >> #The daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter.Time in UTC.
+            preferredMaintenanceWindow: << .config.rds.mysql.preferredMaintenanceWindow >> #The weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
+        patches:
+          - type: PatchSet
+            patchSetName: metadata
+          - fromFieldPath: spec.engineVersion
+            toFieldPath: spec.forProvider.engineVersion
+            policy:
+              fromFieldPath: Required
+          - fromFieldPath: spec.dbClusterInstanceClass
+            toFieldPath: spec.forProvider.dbClusterInstanceClass
+            policy:
+              fromFieldPath: Required
+          - fromFieldPath: spec.performanceInsightsEnabled
+            toFieldPath: spec.forProvider.performanceInsightsEnabled
+          - fromFieldPath: spec.preferredBackupWindow
+            toFieldPath: spec.forProvider.preferredBackupWindow
+          - fromFieldPath: spec.preferredMaintenanceWindow
+            toFieldPath: spec.forProvider.preferredMaintenanceWindow 
+          - fromFieldPath: spec.applyImmediately
+            toFieldPath: spec.forProvider.applyImmediately
+
+    - name: postgres-cluster
+      base:
+        apiVersion: rds.aws.upbound.io/v1beta1
+        kind: Cluster
+        spec:
+          forProvider:
+            allocatedStorage: << .config.rds.mysql.allocatedStorage >> #The amount of storage in gibibytes (GiB) to allocate to each DB instance in the Multi-AZ DB cluster. 
+            allowMajorVersionUpgrade: << .config.rds.mysql.allowMajorVersionUpgrade >> #Enable to allow major engine version upgrades when changing engine versions. Defaults to false.
+            availabilityZones:
+            <<- range $zone := .config.rds.primary.availabilityZones >>
+              - << $zone >>
+            <<- end >>
+            applyImmediately: << .config.rds.mysql.applyImmediately >> #The target backtrack window, in seconds. Only available for aurora and aurora-mysql engines currently.  Defaults to 0. Must be between 0 and 259200 (72 hours)
+            backupRetentionPeriod: << .config.rds.mysql.backupRetentionPeriod >> # The days to retain backups for. Default 1
+            clusterMembers: # List of RDS Instances that are a part of this cluster
+              - mysql-instances-0 #TODO
+            copyTagsToSnapshot: true # Copy all Cluster tags to snapshots. Default is false.
+            databaseName: << .config.rds.mysql.databaseName >> #Name for an automatically created database on cluster creation.
+            dbClusterInstanceClass: << .config.rds.mysql.dbClusterInstanceClass >> # The compute and memory capacity of each DB instance in the Multi-AZ DB cluster, for example db.m6g.xlarge.
+            dbClusterParameterGroupName: mysql-cluster-parameter-group #TODO #A cluster parameter group to associate with the cluster.
+            dbInstanceParameterGroupName: mysql-parameter-group #TODO # Instance parameter group to associate with all instances of the DB cluster. The db_instance_parameter_group_name parameter is only valid in combination with the allow_major_version_upgrade parameter.
+            dbSubnetGroupNameRef: mysql-dbsubnetgroup-v1beta1-<< .config.rds.primary.region >> #A DB subnet group to associate with this DB instance. 
+            deletionProtection: << .config.rds.mysql.deletionProtection >>
+            enabledCloudwatchLogsExports: #Set of log types to export to cloudwatch. If omitted, no logs will be exported. The following log types are supported: audit, error, general, slowquery, postgresql (PostgreSQL).
+              - postgresql #TODO
+            engine: << .config.rds.mysql.engine >> # The name of the database engine to be used for this DB cluster. Defaults to aurora. Valid Values: aurora, aurora-mysql, aurora-postgresql, mysql, postgres. (Note that mysql and postgres are Multi-AZ RDS clusters).
+            engineMode: << .config.rds.mysql.engineMode >> # The database engine mode. Valid values: global (only valid for Aurora MySQL 1.21 and earlier), multimaster, parallelquery, provisioned, serverless. Defaults to: provisioned. See the RDS User Guide for limitations when using serverless.
+            engineVersion: "<< .config.rds.mysql.engineVersion >>" # The database engine version. Updating this argument results in an outage. See the Aurora MySQL and Aurora Postgres documentation for your configured engine to determine this value. For example with Aurora MySQL 2, a potential value for this argument is 5.7.mysql_aurora.2.03.2. The value can contain a partial version where supported by the API. The actual engine version used is returned in the attribute engine_version_actual, , see Attributes Reference below.
+            iamDatabaseAuthenticationEnabled: true # Specifies whether or not mappings of AWS Identity and Access Management (IAM) accounts to database accounts is enabled. Please see AWS Documentation for availability and limitations.
+            kmsKeyId: << .config.rds.primary.kmsKeyId >> #The ARN for the KMS encryption key. Default: managed `aws/rds` key. When specifying kms_key_id, storage_encrypted needs to be set to true.
+            masterUsername: << .config.rds.mysql.masterUsername >>
+            masterPasswordSecretRef:
+              key: << .config.rds.mysql.masterPasswordSecretRef.key >>
+              name: << .config.rds.mysql.masterPasswordSecretRef.name >>
+              namespace: << .config.rds.mysql.masterPasswordSecretRef.namespace >>
+            networkType: IPV4
+            port: << .config.rds.mysql.port >>
+            preferredBackupWindow: << .config.rds.mysql.preferredBackupWindow >> #The daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter.Time in UTC.
+            preferredMaintenanceWindow: << .config.rds.mysql.preferredMaintenanceWindow >> #The weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
+            region: << .config.rds.primary.region >>
+            storageEncrypted: true # Specifies whether the DB cluster is encrypted. The default is false for provisioned engine_mode and true for serverless engine_mode. When restoring an unencrypted snapshot_identifier, the kms_key_id argument must be provided to encrypt the restored cluster.
+            skipFinalSnapshot: << .config.rds.mysql.skipFinalSnapshot >>
+          providerConfigRef:
+            name: default
+        patches:
+          - type: PatchSet
+            patchSetName: metadata
+          - fromFieldPath: spec.datbaseName
+            toFieldPath: spec.forProvider.databaseName
+            policy:
+              fromFieldPath: Required  
+          - fromFieldPath: spec.engineVersion
+            toFieldPath: spec.forProvider.engineVersion
+            policy:
+              fromFieldPath: Required  
+          - fromFieldPath: spec.deletionProtection
+            toFieldPath: spec.forProvider.deletionProtection
+            policy:
+              fromFieldPath: Required
+          - fromFieldPath: spec.dbClusterInstanceClass
+            toFieldPath: spec.forProvider.dbClusterInstanceClass
+            policy:
+              fromFieldPath: Required    
+          - fromFieldPath: spec.skipFinalSnapshot
+            toFieldPath: spec.forProvider.skipFinalSnapshot
+          - fromFieldPath: spec.backupRetentionPeriod
+            toFieldPath: spec.forProvider.backupRetentionPeriod
+          - fromFieldPath: spec.preferredBackupWindow
+            toFieldPath: spec.forProvider.preferredBackupWindow
+          - fromFieldPath: spec.preferredMaintenanceWindow
+            toFieldPath: spec.forProvider.preferredMaintenanceWindow
+          - fromFieldPath: spec.applyImmediately
+            toFieldPath: spec.forProvider.applyImmediately
+            

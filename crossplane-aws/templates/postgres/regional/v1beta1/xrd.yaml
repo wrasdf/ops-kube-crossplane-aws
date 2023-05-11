@@ -30,8 +30,6 @@ spec:
                 type: string
               parameterGroupFamily:
                 type: string  
-              skipFinalSnapshot:
-                type: boolean
               deletionProtection:
                 type: boolean
               dbClusterInstanceClass:
