@@ -35,6 +35,9 @@ spec:
             patchSetName: metadata
           - fromFieldPath: spec.parameterGroupFamily
             toFieldPath: spec.forProvider.family
+            policy:
+              fromFieldPath: Required
+
     - name: postgres-parameter-group
       base:
         apiVersion: rds.aws.upbound.io/v1beta1
@@ -54,6 +57,9 @@ spec:
             patchSetName: metadata
           - fromFieldPath: spec.parameterGroupFamily
             toFieldPath: spec.forProvider.family
+            policy:
+              fromFieldPath: Required
+
     - name: postgres-instance
       base:
         apiVersion: rds.aws.upbound.io/v1beta1
@@ -83,8 +89,21 @@ spec:
             patchSetName: metadata
           - fromFieldPath: spec.engineVersion
             toFieldPath: spec.forProvider.engineVersion
+            policy:
+              fromFieldPath: Required
           - fromFieldPath: spec.dbClusterInstanceClass
             toFieldPath: spec.forProvider.dbClusterInstanceClass
+            policy:
+              fromFieldPath: Required
+          - fromFieldPath: spec.performanceInsightsEnabled
+            toFieldPath: spec.forProvider.performanceInsightsEnabled
+          - fromFieldPath: spec.preferredBackupWindow
+            toFieldPath: spec.forProvider.preferredBackupWindow
+          - fromFieldPath: spec.preferredMaintenanceWindow
+            toFieldPath: spec.forProvider.preferredMaintenanceWindow 
+          - fromFieldPath: spec.applyImmediately
+            toFieldPath: spec.forProvider.applyImmediately
+
     - name: postgres-cluster
       base:
         apiVersion: rds.aws.upbound.io/v1beta1
@@ -134,12 +153,28 @@ spec:
             patchSetName: metadata
           - fromFieldPath: spec.datbaseName
             toFieldPath: spec.forProvider.databaseName
+            policy:
+              fromFieldPath: Required  
           - fromFieldPath: spec.engineVersion
             toFieldPath: spec.forProvider.engineVersion
+            policy:
+              fromFieldPath: Required  
           - fromFieldPath: spec.deletionProtection
             toFieldPath: spec.forProvider.deletionProtection
-          - fromFieldPath: spec.skipFinalSnapshot
-            toFieldPath: spec.forProvider.skipFinalSnapshot
+            policy:
+              fromFieldPath: Required
           - fromFieldPath: spec.dbClusterInstanceClass
             toFieldPath: spec.forProvider.dbClusterInstanceClass
+            policy:
+              fromFieldPath: Required    
+          - fromFieldPath: spec.skipFinalSnapshot
+            toFieldPath: spec.forProvider.skipFinalSnapshot
+          - fromFieldPath: spec.backupRetentionPeriod
+            toFieldPath: spec.forProvider.backupRetentionPeriod
+          - fromFieldPath: spec.preferredBackupWindow
+            toFieldPath: spec.forProvider.preferredBackupWindow
+          - fromFieldPath: spec.preferredMaintenanceWindow
+            toFieldPath: spec.forProvider.preferredMaintenanceWindow
+          - fromFieldPath: spec.applyImmediately
+            toFieldPath: spec.forProvider.applyImmediately
             

@@ -16,8 +16,6 @@
 - Conditions in composition -> Not Support
   - eg: if/else
 - Pass parameters between resources ?
-- Default vaule with patch ?
-
 
 #### Command
 - ./bin/compile.sh alpha-usea1-v1

@@ -1,22 +1,27 @@
-### Issues
-- engineVersion: 14.6
-- ClusterParameterGroup: 
-  family: aurora-postgresql14
-- ParameterGroup:
-  family: aurora-postgresql14
+#### Cluster With Refs
+
+- Subnets
+  - dbSubnetGroupName
+  - dbSubnetGroupNameRef
+  - dbSubnetGroupNameSelector 
+
+- MasterPassword
+  - masterPasswordSecretRef
+
+- KmsKey
+  - kmsKeyId
+  - kmsKeyIdRef
+  - kmsKeyIdSelector
+
+### Composition Details
+
+- patches
+  - type: `FromCompositeFieldPath` -> `FromCompositeFieldPath` is the default when 'type' is omitted.
+  - policy: `Required` 
+    - By default a patch from a field path that does not exist is simply skipped until it does. 
+    - Use the 'Required' policy to instead block and return an error when the field path does not exist.
 
 
-#### With Refs
-
-dbSubnetGroupName
-dbSubnetGroupNameRef
-dbSubnetGroupNameSelector 
-
-masterPasswordSecretRef
-
-kmsKeyId
-kmsKeyIdRef
-kmsKeyIdSelector
 
 ### Commands
 - aws rds describe-db-engine-versions --engine aurora-postgresql --query '*[].[EngineVersion]' --output text > aurora-postgresql-engine.md

@@ -9,7 +9,28 @@ spec:
   datbaseName: postgres
   engineVersion: "14.6"
   parameterGroupFamily: aurora-postgresql14
-  skipFinalSnapshot: true
   deletionProtection: false
   dbClusterInstanceClass: db.r5.large
   dbInstanceCount: 2 #### How ?
+
+### Full 
+---
+apiVersion: aws.v1beta1.afterpay.cloud/v1beta1
+kind: RPostgres
+metadata:
+  name: regional-postgres-deleteme-v1
+  labels:
+    version: v1beta1
+spec:
+  datbaseName: postgres
+  engineVersion: "14.6"
+  parameterGroupFamily: aurora-postgresql14
+  deletionProtection: false
+  dbClusterInstanceClass: db.r5.large
+  dbInstanceCount: 2
+  skipFinalSnapshot: true
+  performanceInsightsEnabled: true
+  backupRetentionPeriod: 7
+  preferredBackupWindow: 12:00-13:00
+  preferredMaintenanceWindow: wed:10:00-wed:11:00
+  applyImmediately: true
