@@ -81,7 +81,7 @@ rds:
     masterUsername: dbadmin
     masterPasswordSecretRef:
       key: password
-      name: rpostgres-dbadmin
+      name: rmysql-dbadmin
       namespace: upbound-system
     port: 3306
     skipFinalSnapshot: true
