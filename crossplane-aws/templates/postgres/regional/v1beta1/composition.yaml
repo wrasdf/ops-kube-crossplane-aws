@@ -104,7 +104,7 @@ spec:
           - fromFieldPath: spec.applyImmediately
             toFieldPath: spec.forProvider.applyImmediately
 
-    <<- $replica := .config.rds.replicas | coll.Pick .config.rds.primary >>
+    << $replica := .config.rds.replicas | coll.Pick .config.rds.primary ->>
     - name: postgres-cluster
       base:
         apiVersion: rds.aws.upbound.io/v1beta1
