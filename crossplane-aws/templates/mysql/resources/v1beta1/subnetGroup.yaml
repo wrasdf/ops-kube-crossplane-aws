@@ -2,7 +2,7 @@
 apiVersion: rds.aws.upbound.io/v1beta1
 kind: SubnetGroup
 metadata:
-  name: mysql-dbsubnetgroup-v1beta1-<< .config.rds.primary.region >>
+  name: mysql-dbsubnetgroup-<< .config.rds.primary.region >>
   label:
     provider: aws
     region: << .config.rds.primary.region >>
@@ -19,7 +19,7 @@ spec:
 apiVersion: rds.aws.upbound.io/v1beta1
 kind: SubnetGroup
 metadata:
-  name: mysql-dbsubnetgroup-v1beta1-<< $value.region >>
+  name: mysql-dbsubnetgroup-<< $value.region >>
   label:
     provider: aws
     region: << $value.region >>

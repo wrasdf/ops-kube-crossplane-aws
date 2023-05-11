@@ -95,7 +95,7 @@ spec:
             identifier: mysql-instances-0 #TODO
             instanceClass: << .config.rds.mysql.dbClusterInstanceClass >>
             dbParameterGroupName: mysql-parameter-group #TODO
-            dbSubnetGroupNameRef: mysql-dbsubnetgroup-v1beta1-<< .config.rds.primary.region >>
+            dbSubnetGroupNameRef: mysql-dbsubnetgroup-<< .config.rds.primary.region >>
             performanceInsightsEnabled: << .config.rds.mysql.performanceInsightsEnabled >>
             preferredBackupWindow: << .config.rds.mysql.preferredBackupWindow >> #The daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter.Time in UTC.
             preferredMaintenanceWindow: << .config.rds.mysql.preferredMaintenanceWindow >> #The weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
@@ -142,7 +142,7 @@ spec:
             dbClusterInstanceClass: << .config.rds.mysql.dbClusterInstanceClass >> # The compute and memory capacity of each DB instance in the Multi-AZ DB cluster, for example db.m6g.xlarge.
             dbClusterParameterGroupName: mysql-cluster-parameter-group #TODO #A cluster parameter group to associate with the cluster.
             dbInstanceParameterGroupName: mysql-parameter-group #TODO # Instance parameter group to associate with all instances of the DB cluster. The db_instance_parameter_group_name parameter is only valid in combination with the allow_major_version_upgrade parameter.
-            dbSubnetGroupNameRef: mysql-dbsubnetgroup-v1beta1-<< .config.rds.primary.region >> #A DB subnet group to associate with this DB instance. 
+            dbSubnetGroupNameRef: mysql-dbsubnetgroup-<< .config.rds.primary.region >> #A DB subnet group to associate with this DB instance. 
             deletionProtection: << .config.rds.mysql.deletionProtection >>
             enabledCloudwatchLogsExports: #Set of log types to export to cloudwatch. If omitted, no logs will be exported. The following log types are supported: audit, error, general, slowquery, postgresql (PostgreSQL).
               - audit
