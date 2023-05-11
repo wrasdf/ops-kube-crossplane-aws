@@ -30,6 +30,7 @@ spec:
   dbInstanceCount: 2
   skipFinalSnapshot: true
   performanceInsightsEnabled: true
+  allocatedStorage: 2 # The amount of storage in gibibytes (GiB)
   backupRetentionPeriod: 7
   preferredBackupWindow: 12:00-13:00
   preferredMaintenanceWindow: wed:10:00-wed:11:00

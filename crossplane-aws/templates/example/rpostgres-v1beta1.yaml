@@ -29,6 +29,7 @@ spec:
   dbClusterInstanceClass: db.r5.large
   dbInstanceCount: 2
   skipFinalSnapshot: true
+  allocatedStorage: 2 # The amount of storage in gibibytes (GiB)
   performanceInsightsEnabled: true
   backupRetentionPeriod: 7
   preferredBackupWindow: 12:00-13:00
