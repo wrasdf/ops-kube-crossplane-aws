@@ -1,19 +1,3 @@
----
-apiVersion: rds.aws.upbound.io/v1beta1
-kind: SubnetGroup
-metadata:
-  name: postgres-dbsubnetgroup-<< .config.rds.primary.region >>
-  label:
-    provider: aws
-    region: << .config.rds.primary.region >>
-    version: v1beta1
-spec:
-  forProvider:
-    region: << .config.rds.primary.region >>
-    subnetIds:
-    <<- range $subnetId := .config.rds.primary.dbSubnetIds >>
-      - << $subnetId >>
-    <<- end >>
 <<- range $key, $value := .config.rds.replicas >>
 ---
 apiVersion: rds.aws.upbound.io/v1beta1

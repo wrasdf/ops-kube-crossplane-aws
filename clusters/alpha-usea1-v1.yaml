@@ -4,18 +4,19 @@ aws:
   region: us-east-1
   accountId: 568431661506
 rds:
-  primary:
-    region: us-east-1
-    dbSubnetIds:
-      - subnet-090cae6f93a9568ef
-      - subnet-0e8d2312ca5b96af6
-      - subnet-0be8ac7164bdafe2c
-    availabilityZones:
-      - us-east-1a
-      - us-east-1b
-      - us-east-1c
-    kmsKeyId: arn:aws:kms:us-east-1:568431661506:key/d8581ddd-3f1c-44b7-8e69-1dd61c1b5cbe  
+  primary: usea1
   replicas:
+    usea1:
+      region: us-east-1
+      dbSubnetIds:
+        - subnet-090cae6f93a9568ef
+        - subnet-0e8d2312ca5b96af6
+        - subnet-0be8ac7164bdafe2c
+      availabilityZones:
+        - us-east-1a
+        - us-east-1b
+        - us-east-1c
+      kmsKeyId: arn:aws:kms:us-east-1:568431661506:key/d8581ddd-3f1c-44b7-8e69-1dd61c1b5cbe
     apse2:
       region: ap-southeast-2
       dbSubnetIds:

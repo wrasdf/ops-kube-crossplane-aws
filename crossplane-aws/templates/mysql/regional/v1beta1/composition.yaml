@@ -22,7 +22,7 @@ spec:
           name: mysql-cluster-parameter-group
         spec:
           forProvider:
-            region: << .config.rds.primary.region >>
+            region: << .config.aws.region >>
             family: << .config.rds.mysql.family >>
             parameter:
               - name: character_set_server
@@ -62,7 +62,7 @@ spec:
           name: mysql-parameter-group
         spec:
           forProvider:
-            region: << .config.rds.primary.region >>
+            region: << .config.aws.region >>
             family: << .config.rds.mysql.family >>
             parameter:
               - name: "max_connections"
@@ -83,7 +83,7 @@ spec:
           name: mysql-instances-0
         spec:
           forProvider:
-            region: << .config.rds.primary.region >>
+            region: << .config.aws.region >>
             applyImmediately: << .config.rds.mysql.applyImmediately >>
             autoMinorVersionUpgrade: << .config.rds.mysql.autoMinorVersionUpgrade >>
             clusterIdentifierRef:
@@ -95,7 +95,7 @@ spec:
             identifier: mysql-instances-0 #TODO
             instanceClass: << .config.rds.mysql.dbClusterInstanceClass >>
             dbParameterGroupName: mysql-parameter-group #TODO
-            dbSubnetGroupNameRef: mysql-dbsubnetgroup-<< .config.rds.primary.region >>
+            dbSubnetGroupNameRef: mysql-dbsubnetgroup-<< .config.aws.region >>
             performanceInsightsEnabled: << .config.rds.mysql.performanceInsightsEnabled >>
             preferredBackupWindow: << .config.rds.mysql.preferredBackupWindow >> #The daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter.Time in UTC.
             preferredMaintenanceWindow: << .config.rds.mysql.preferredMaintenanceWindow >> #The weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
@@ -130,7 +130,7 @@ spec:
             allocatedStorage: << .config.rds.mysql.allocatedStorage >> #The amount of storage in gibibytes (GiB) to allocate to each DB instance in the Multi-AZ DB cluster. 
             allowMajorVersionUpgrade: << .config.rds.mysql.allowMajorVersionUpgrade >> #Enable to allow major engine version upgrades when changing engine versions. Defaults to false.
             availabilityZones:
-            <<- range $zone := .config.rds.primary.availabilityZones >>
+            <<- range $zone := .config.rds.replicas.usea1.availabilityZones >>
               - << $zone >>
             <<- end >>
             applyImmediately: << .config.rds.mysql.applyImmediately >> #The target backtrack window, in seconds. Only available for aurora and aurora-mysql engines currently.  Defaults to 0. Must be between 0 and 259200 (72 hours)
@@ -142,7 +142,7 @@ spec:
             dbClusterInstanceClass: << .config.rds.mysql.dbClusterInstanceClass >> # The compute and memory capacity of each DB instance in the Multi-AZ DB cluster, for example db.m6g.xlarge.
             dbClusterParameterGroupName: mysql-cluster-parameter-group #TODO #A cluster parameter group to associate with the cluster.
             dbInstanceParameterGroupName: mysql-parameter-group #TODO # Instance parameter group to associate with all instances of the DB cluster. The db_instance_parameter_group_name parameter is only valid in combination with the allow_major_version_upgrade parameter.
-            dbSubnetGroupNameRef: mysql-dbsubnetgroup-<< .config.rds.primary.region >> #A DB subnet group to associate with this DB instance. 
+            dbSubnetGroupNameRef: mysql-dbsubnetgroup-<< .config.aws.region >> #A DB subnet group to associate with this DB instance. 
             deletionProtection: << .config.rds.mysql.deletionProtection >>
             enabledCloudwatchLogsExports: #Set of log types to export to cloudwatch. If omitted, no logs will be exported. The following log types are supported: audit, error, general, slowquery, postgresql (PostgreSQL).
               - audit
@@ -153,7 +153,7 @@ spec:
             engineMode: << .config.rds.mysql.engineMode >> # The database engine mode. Valid values: global (only valid for Aurora MySQL 1.21 and earlier), multimaster, parallelquery, provisioned, serverless. Defaults to: provisioned. See the RDS User Guide for limitations when using serverless.
             engineVersion: "<< .config.rds.mysql.engineVersion >>" # The database engine version. Updating this argument results in an outage. See the Aurora MySQL and Aurora Postgres documentation for your configured engine to determine this value. For example with Aurora MySQL 2, a potential value for this argument is 5.7.mysql_aurora.2.03.2. The value can contain a partial version where supported by the API. The actual engine version used is returned in the attribute engine_version_actual, , see Attributes Reference below.
             iamDatabaseAuthenticationEnabled: true # Specifies whether or not mappings of AWS Identity and Access Management (IAM) accounts to database accounts is enabled. Please see AWS Documentation for availability and limitations.
-            kmsKeyId: << .config.rds.primary.kmsKeyId >> #The ARN for the KMS encryption key. Default: managed `aws/rds` key. When specifying kms_key_id, storage_encrypted needs to be set to true.
+            kmsKeyId: << .config.rds.replicas.usea1.kmsKeyId >> #The ARN for the KMS encryption key. Default: managed `aws/rds` key. When specifying kms_key_id, storage_encrypted needs to be set to true.
             masterUsername: << .config.rds.mysql.masterUsername >>
             masterPasswordSecretRef:
               key: << .config.rds.mysql.masterPasswordSecretRef.key >>
@@ -163,7 +163,7 @@ spec:
             port: << .config.rds.mysql.port >>
             preferredBackupWindow: << .config.rds.mysql.preferredBackupWindow >> #The daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter.Time in UTC.
             preferredMaintenanceWindow: << .config.rds.mysql.preferredMaintenanceWindow >> #The weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
-            region: << .config.rds.primary.region >>
+            region: << .config.aws.region >>
             storageEncrypted: true # Specifies whether the DB cluster is encrypted. The default is false for provisioned engine_mode and true for serverless engine_mode. When restoring an unencrypted snapshot_identifier, the kms_key_id argument must be provided to encrypt the restored cluster.
             skipFinalSnapshot: << .config.rds.mysql.skipFinalSnapshot >>
           providerConfigRef:
