@@ -36,7 +36,6 @@ spec:
                 type: boolean
               dbClusterInstanceClass:
                 type: string
-              x-kubernetes-preserve-unknown-fields: true
               required:
                 - datbaseName
                 - engineVersion
@@ -44,6 +43,7 @@ spec:
                 - skipFinalSnapshot
                 - deletionProtection
                 - dbClusterInstanceClass
+              x-kubernetes-preserve-unknown-fields: true
           status:
             description: Status defines the observed state
             type: object

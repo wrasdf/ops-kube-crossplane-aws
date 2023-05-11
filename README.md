@@ -10,6 +10,14 @@
 
 - As a developer, I would like to create a global mysql aurora cluster.
 
-#### Command
+### Limits
+- Dynamic create multiple base resources -> Not Support
+  - eg: 1 instance / 2 instances / 3 instances
+- Conditions in composition -> Not Support
+  - eg: if/else
+- Pass parameters between resources ?
+- Default vaule with patch ?
 
+
+#### Command
 - ./bin/compile.sh alpha-usea1-v1

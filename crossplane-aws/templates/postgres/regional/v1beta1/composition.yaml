@@ -1,3 +1,4 @@
+---
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
@@ -17,6 +18,8 @@ spec:
       base:
         apiVersion: rds.aws.upbound.io/v1beta1
         kind: ClusterParameterGroup
+        metedata:
+          name: postgres-cluster-parameter-group
         spec:
           forProvider:
             region: << .config.rds.primary.region >>
@@ -36,6 +39,8 @@ spec:
       base:
         apiVersion: rds.aws.upbound.io/v1beta1
         kind: ParameterGroup
+        metedata:
+          name: postgres-parameter-group
         spec:
           forProvider:
             region: << .config.rds.primary.region >>
@@ -54,21 +59,21 @@ spec:
         apiVersion: rds.aws.upbound.io/v1beta1
         kind: ClusterInstance
         metadata:
-          name: example
+          name: postgres-instances-0
         spec:
           forProvider:
             region: << .config.rds.primary.region >>
             applyImmediately: << .config.rds.postgres.applyImmediately >>
             autoMinorVersionUpgrade: << .config.rds.postgres.autoMinorVersionUpgrade >>
             clusterIdentifierRef:
-              name: "" #todo
+              name: "" #TODO
             engine: << .config.rds.postgres.engine >>
             engineMode: << .config.rds.postgres.engineMode >> 
             engineVersion: "<< .config.rds.postgres.engineVersion >>" 
             copyTagsToSnapshot: true
-            identifier: "" #todo
+            identifier: "" #TODO
             instanceClass: << .config.rds.postgres.dbClusterInstanceClass >>
-            dbParameterGroupName: postgres-parameter-group-v1beta1-<< .config.rds.primary.region >>
+            dbParameterGroupName: postgres-parameter-group #TODO
             dbSubnetGroupNameRef: postgres-dbsubnetgroup-v1beta1-<< .config.rds.primary.region >>
             performanceInsightsEnabled: << .config.rds.postgres.performanceInsightsEnabled >>
             preferredBackupWindow: << .config.rds.postgres.preferredBackupWindow >> #The daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter.Time in UTC.
@@ -95,13 +100,12 @@ spec:
             applyImmediately: << .config.rds.postgres.applyImmediately >> #The target backtrack window, in seconds. Only available for aurora and aurora-mysql engines currently.  Defaults to 0. Must be between 0 and 259200 (72 hours)
             backupRetentionPeriod: << .config.rds.postgres.backupRetentionPeriod >> # The days to retain backups for. Default 1
             clusterMembers: # List of RDS Instances that are a part of this cluster
-              - pe-example-import-0 #TODO
-              - pe-example-import-1 #TODO
+              - postgres-instances-0 #TODO
             copyTagsToSnapshot: true # Copy all Cluster tags to snapshots. Default is false.
             databaseName: << .config.rds.postgres.databaseName >> #Name for an automatically created database on cluster creation.
             dbClusterInstanceClass: << .config.rds.postgres.dbClusterInstanceClass >> # The compute and memory capacity of each DB instance in the Multi-AZ DB cluster, for example db.m6g.xlarge.
-            dbClusterParameterGroupName: #TODO #A cluster parameter group to associate with the cluster.
-            dbInstanceParameterGroupName: #TODO # Instance parameter group to associate with all instances of the DB cluster. The db_instance_parameter_group_name parameter is only valid in combination with the allow_major_version_upgrade parameter.
+            dbClusterParameterGroupName: postgres-cluster-parameter-group #TODO #A cluster parameter group to associate with the cluster.
+            dbInstanceParameterGroupName: postgres-parameter-group #TODO # Instance parameter group to associate with all instances of the DB cluster. The db_instance_parameter_group_name parameter is only valid in combination with the allow_major_version_upgrade parameter.
             dbSubnetGroupNameRef: postgres-dbsubnetgroup-v1beta1-<< .config.rds.primary.region >> #A DB subnet group to associate with this DB instance. 
             deletionProtection: << .config.rds.postgres.deletionProtection >>
             enabledCloudwatchLogsExports: #Set of log types to export to cloudwatch. If omitted, no logs will be exported. The following log types are supported: audit, error, general, slowquery, postgresql (PostgreSQL).
@@ -138,3 +142,4 @@ spec:
             toFieldPath: spec.forProvider.skipFinalSnapshot
           - fromFieldPath: spec.dbClusterInstanceClass
             toFieldPath: spec.forProvider.dbClusterInstanceClass
+            

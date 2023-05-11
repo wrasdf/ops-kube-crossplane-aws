@@ -18,7 +18,6 @@ kmsKeyId
 kmsKeyIdRef
 kmsKeyIdSelector
 
-
 ### Commands
 - aws rds describe-db-engine-versions --engine aurora-postgresql --query '*[].[EngineVersion]' --output text > aurora-postgresql-engine.md
 
