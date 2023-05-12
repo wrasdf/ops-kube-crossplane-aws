@@ -51,7 +51,7 @@ rds:
     engineMode: provisioned
     engineVersion: "14.6"
     family: aurora-postgresql14
-    dbClusterInstanceClass: db.r5.large
+    dbClusterInstanceClass: db.r6g.xlarge
     preferredBackupWindow: 12:00-13:00
     preferredMaintenanceWindow: wed:10:00-wed:11:00
     performanceInsightsEnabled: false
@@ -74,7 +74,7 @@ rds:
     engineMode: provisioned
     engineVersion: "8.0"
     family: aurora-mysql8.0
-    dbClusterInstanceClass: db.r5.large
+    dbClusterInstanceClass: db.r6g.xlarge
     preferredBackupWindow: 12:00-13:00
     preferredMaintenanceWindow: wed:10:00-wed:11:00
     performanceInsightsEnabled: false

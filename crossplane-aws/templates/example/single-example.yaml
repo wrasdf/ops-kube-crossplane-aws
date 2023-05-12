@@ -1,0 +1,100 @@
+---
+apiVersion: rds.aws.upbound.io/v1beta1
+kind: ClusterParameterGroup
+metadata:
+  name: postgres-cluster-parameter-group
+spec:
+  forProvider:
+    region: us-east-1
+    family: aurora-postgresql14
+    parameter:
+      - name: rds.force_ssl
+        value: "1"
+      - applyMethod: pending-reboot
+        name: rds.logical_replication
+        value: "1"
+
+---
+apiVersion: rds.aws.upbound.io/v1beta1
+kind: ParameterGroup
+metadata:
+  name: postgres-parameter-group
+spec:
+  forProvider:
+    region: us-east-1
+    family: aurora-postgresql14
+    parameter:
+      - applyMethod: pending-reboot
+        name: shared_preload_libraries
+        value: pg_stat_statements.pgaudit
+
+---
+apiVersion: rds.aws.upbound.io/v1beta1
+kind: ClusterInstance
+metadata:
+  name: postgres-instances-0
+spec:
+  forProvider:
+    region: us-east-1
+    applyImmediately: false
+    autoMinorVersionUpgrade: false
+    clusterIdentifierRef:
+      name: postgres-cluster #TODO
+    engine: aurora-postgresql
+    engineVersion: "14.6"
+    copyTagsToSnapshot: true
+    instanceClass: db.r6g.xlarge
+    dbParameterGroupName: postgres-parameter-group #TODO
+    dbSubnetGroupNameRef: 
+      name: postgres-dbsubnetgroup-us-east-1
+    performanceInsightsEnabled: false
+    preferredBackupWindow: 12:00-13:00 #The daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter.Time in UTC.
+    preferredMaintenanceWindow: wed:10:00-wed:11:00 #The weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
+  providerConfigRef:
+    name: default
+---
+apiVersion: rds.aws.upbound.io/v1beta1
+kind: Cluster
+metadata:
+  name: postgres-cluster
+spec:
+  forProvider:
+    allocatedStorage: 1 #The amount of storage in gibibytes (GiB) to allocate to each DB instance in the Multi-AZ DB cluster. 
+    allowMajorVersionUpgrade: false #Enable to allow major engine version upgrades when changing engine versions. Defaults to false.
+    availabilityZones:
+      - us-east-1a
+      - us-east-1b
+      - us-east-1c
+    applyImmediately: false #The target backtrack window, in seconds. Only available for aurora and aurora-mysql engines currently.  Defaults to 0. Must be between 0 and 259200 (72 hours)
+    backupRetentionPeriod: 3 # The days to retain backups for. Default 1
+    clusterMembers: # List of RDS Instances that are a part of this cluster
+      - postgres-instances-0 #TODO
+    copyTagsToSnapshot: true # Copy all Cluster tags to snapshots. Default is false.
+    databaseName: postgres #Name for an automatically created database on cluster creation.
+    dbClusterInstanceClass: db.r6g.xlarge # The compute and memory capacity of each DB instance in the Multi-AZ DB cluster, for example db.m6g.xlarge.
+    dbClusterParameterGroupName: postgres-cluster-parameter-group #TODO #A cluster parameter group to associate with the cluster.
+    dbInstanceParameterGroupName: postgres-parameter-group #TODO # Instance parameter group to associate with all instances of the DB cluster. The db_instance_parameter_group_name parameter is only valid in combination with the allow_major_version_upgrade parameter.
+    dbSubnetGroupNameRef: 
+      name: postgres-dbsubnetgroup-us-east-1 #A DB subnet group to associate with this DB instance. 
+    deletionProtection: false
+    enabledCloudwatchLogsExports: #Set of log types to export to cloudwatch. If omitted, no logs will be exported. The following log types are supported: audit, error, general, slowquery, postgresql (PostgreSQL).
+      - postgresql
+    engine: aurora-postgresql # The name of the database engine to be used for this DB cluster. Defaults to aurora. Valid Values: aurora, aurora-mysql, aurora-postgresql, mysql, postgres. (Note that mysql and postgres are Multi-AZ RDS clusters).
+    engineMode: provisioned # The database engine mode. Valid values: global (only valid for Aurora MySQL 1.21 and earlier), multimaster, parallelquery, provisioned, serverless. Defaults to: provisioned. See the RDS User Guide for limitations when using serverless.
+    engineVersion: "14.6" # The database engine version. Updating this argument results in an outage. See the Aurora MySQL and Aurora Postgres documentation for your configured engine to determine this value. For example with Aurora MySQL 2, a potential value for this argument is 5.7.mysql_aurora.2.03.2. The value can contain a partial version where supported by the API. The actual engine version used is returned in the attribute engine_version_actual, , see Attributes Reference below.
+    iamDatabaseAuthenticationEnabled: true # Specifies whether or not mappings of AWS Identity and Access Management (IAM) accounts to database accounts is enabled. Please see AWS Documentation for availability and limitations.
+    kmsKeyId: arn:aws:kms:us-east-1:568431661506:key/d8581ddd-3f1c-44b7-8e69-1dd61c1b5cbe #The ARN for the KMS encryption key. Default: managed `aws/rds` key. When specifying kms_key_id, storage_encrypted needs to be set to true.
+    masterUsername: dbadmin
+    masterPasswordSecretRef:
+      key: password
+      name: rpostgres-dbadmin
+      namespace: upbound-system
+    networkType: IPV4
+    port: 5432
+    preferredBackupWindow: 12:00-13:00 #The daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter.Time in UTC.
+    preferredMaintenanceWindow: wed:10:00-wed:11:00 #The weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
+    region: us-east-1
+    storageEncrypted: true # Specifies whether the DB cluster is encrypted. The default is false for provisioned engine_mode and true for serverless engine_mode. When restoring an unencrypted snapshot_identifier, the kms_key_id argument must be provided to encrypt the restored cluster.
+    skipFinalSnapshot: true
+  providerConfigRef:
+    name: default
