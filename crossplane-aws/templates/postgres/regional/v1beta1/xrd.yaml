@@ -49,6 +49,6 @@ spec:
               description: Status defines the observed state
               properties:
                 outputs:
-                  description: Freeform field containing status information for regional mysql
+                  description: Freeform field containing status information for regional postgres
                   type: object
                   x-kubernetes-preserve-unknown-fields: true    
