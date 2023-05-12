@@ -18,7 +18,7 @@ spec:
       base:
         apiVersion: rds.aws.upbound.io/v1beta1
         kind: ClusterParameterGroup
-        metedata:
+        metadata:
           name: postgres-cluster-parameter-group
         spec:
           forProvider:
@@ -26,10 +26,10 @@ spec:
             family: << .config.rds.postgres.family >>
             parameter:
               - name: rds.force_ssl
-                value: 1
+                value: "1"
               - applyMethod: pending-reboot
                 name: rds.logical_replication
-                value: 1
+                value: "1"
         patches:
           - type: PatchSet
             patchSetName: metadata
@@ -42,7 +42,7 @@ spec:
       base:
         apiVersion: rds.aws.upbound.io/v1beta1
         kind: ParameterGroup
-        metedata:
+        metadata:
           name: postgres-parameter-group
         spec:
           forProvider:
