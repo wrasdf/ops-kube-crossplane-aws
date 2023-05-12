@@ -8,11 +8,6 @@ spec:
   compositeTypeRef:
     apiVersion: aws.v1beta1.afterpay.cloud/v1beta1
     kind: XRPostgres
-  patchSets:
-    - name: metadata
-      patches:
-        - fromFieldPath: metadata.labels
-          toFieldPath: metadata.labels
   resources:
     - name: postgres-cluster-parameter-group
       base:
@@ -31,8 +26,6 @@ spec:
                 name: rds.logical_replication
                 value: 1
         patches:
-          - type: PatchSet
-            patchSetName: metadata
           - fromFieldPath: spec.parameterGroupFamily
             toFieldPath: spec.forProvider.family
             policy:
@@ -51,10 +44,8 @@ spec:
             parameter:
               - applyMethod: pending-reboot
                 name: shared_preload_libraries
-                value: pg_stat_statements,pgaudit
+                value: pg_stat_statements.pgaudit
         patches:
-          - type: PatchSet
-            patchSetName: metadata
           - fromFieldPath: spec.parameterGroupFamily
             toFieldPath: spec.forProvider.family
             policy:
@@ -85,8 +76,6 @@ spec:
             preferredBackupWindow: << .config.rds.postgres.preferredBackupWindow >> #The daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter.Time in UTC.
             preferredMaintenanceWindow: << .config.rds.postgres.preferredMaintenanceWindow >> #The weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
         patches:
-          - type: PatchSet
-            patchSetName: metadata
           - fromFieldPath: spec.engineVersion
             toFieldPath: spec.forProvider.engineVersion
             policy:
@@ -156,8 +145,6 @@ spec:
           providerConfigRef:
             name: default
         patches:
-          - type: PatchSet
-            patchSetName: metadata
           - fromFieldPath: spec.datbaseName
             toFieldPath: spec.forProvider.databaseName
             policy:
@@ -173,7 +160,7 @@ spec:
           - fromFieldPath: spec.dbClusterInstanceClass
             toFieldPath: spec.forProvider.dbClusterInstanceClass
             policy:
-              fromFieldPath: Required    
+              fromFieldPath: Required
           - fromFieldPath: spec.skipFinalSnapshot
             toFieldPath: spec.forProvider.skipFinalSnapshot
           - fromFieldPath: spec.backupRetentionPeriod

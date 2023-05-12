@@ -36,14 +36,14 @@ spec:
                   type: string
                 dbInstanceCount:
                   type: number
-                required:
-                  - datbaseName
-                  - engineVersion
-                  - parameterGroupFamily
-                  - deletionProtection
-                  - dbClusterInstanceClass
-                  - dbInstanceCount
-                x-kubernetes-preserve-unknown-fields: true
+              required:
+                - datbaseName
+                - engineVersion
+                - parameterGroupFamily
+                - deletionProtection
+                - dbClusterInstanceClass
+                - dbInstanceCount
+              x-kubernetes-preserve-unknown-fields: true
             status:
               type: object
               description: Status defines the observed state

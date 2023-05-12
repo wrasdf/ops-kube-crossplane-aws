@@ -2,7 +2,7 @@
 apiVersion: aws.v1beta1.afterpay.cloud/v1beta1
 kind: RPostgres
 metadata:
-  name: regional-postgres-deleteme-v1
+  name: regional-postgres-deleteme-v2
   namespace: pe
   labels:
     version: v1beta1
