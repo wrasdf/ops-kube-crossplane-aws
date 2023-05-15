@@ -23,8 +23,6 @@ spec:
       base:
         apiVersion: rds.aws.upbound.io/v1beta1
         kind: ClusterParameterGroup
-        metadata:
-          name: mysql-cluster-parameter-group
         spec:
           forProvider:
             region: << .config.aws.region >>
@@ -60,13 +58,16 @@ spec:
             toFieldPath: spec.forProvider.family
             policy:
               fromFieldPath: Required
+          - type: ToCompositeFieldPath
+            fromFieldPath: status.atProvider.id
+            toFieldPath: status.share.clusterParameterGroupId
+            policy:
+              fromFieldPath: Optional
 
     - name: mysql-parameter-group
       base:
         apiVersion: rds.aws.upbound.io/v1beta1
         kind: ParameterGroup
-        metadata:
-          name: mysql-parameter-group
         spec:
           forProvider:
             region: << .config.aws.region >>
@@ -83,30 +84,31 @@ spec:
             toFieldPath: spec.forProvider.family
             policy:
               fromFieldPath: Required
+          - type: ToCompositeFieldPath
+            fromFieldPath: status.atProvider.id
+            toFieldPath: status.share.parameterGroupId
+            policy:
+              fromFieldPath: Optional
 
-    - name: mysql-instance
+    - name: mysql-instance-0
       base:
         apiVersion: rds.aws.upbound.io/v1beta1
         kind: ClusterInstance
-        metadata:
-          name: mysql-instances-0
         spec:
           forProvider:
             region: << .config.aws.region >>
             applyImmediately: << .config.rds.mysql.applyImmediately >>
             autoMinorVersionUpgrade: << .config.rds.mysql.autoMinorVersionUpgrade >>
-            clusterIdentifierRef:
-              name: mysql-cluster #TODO
             engine: << .config.rds.mysql.engine >>
             engineVersion: "<< .config.rds.mysql.engineVersion >>" 
             copyTagsToSnapshot: true
+            clusterIdentifierRef:
+              name: ""
             instanceClass: << .config.rds.mysql.dbClusterInstanceClass >>
-            dbParameterGroupName: mysql-parameter-group #TODO
-            dbSubnetGroupNameRef: 
+            dbParameterGroupName: ""
+            dbSubnetGroupNameRef:
               name: mysql-dbsubnetgroup-<< .config.aws.region >>
             performanceInsightsEnabled: << .config.rds.mysql.performanceInsightsEnabled >>
-            preferredBackupWindow: << .config.rds.mysql.preferredBackupWindow >> #The daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter.Time in UTC.
-            preferredMaintenanceWindow: << .config.rds.mysql.preferredMaintenanceWindow >> #The weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
           providerConfigRef:
             name: default  
         patches:
@@ -120,6 +122,14 @@ spec:
             toFieldPath: spec.forProvider.dbClusterInstanceClass
             policy:
               fromFieldPath: Required
+          - fromFieldPath: status.share.parameterGroupId
+            toFieldPath: spec.forProvider.dbParameterGroupName
+            policy:
+              fromFieldPath: Required
+          - fromFieldPath: status.share.clusterId
+            toFieldPath: spec.forProvider.clusterIdentifierRef.name
+            policy:
+              fromFieldPath: Required
           - fromFieldPath: spec.performanceInsightsEnabled
             toFieldPath: spec.forProvider.performanceInsightsEnabled
           - fromFieldPath: spec.preferredBackupWindow
@@ -128,14 +138,17 @@ spec:
             toFieldPath: spec.forProvider.preferredMaintenanceWindow 
           - fromFieldPath: spec.applyImmediately
             toFieldPath: spec.forProvider.applyImmediately
+          - type: ToCompositeFieldPath
+            fromFieldPath: status.atProvider.id
+            toFieldPath: status.share.clusterInstanceId
+            policy:
+              fromFieldPath: Optional
 
     << $replica := .config.rds.replicas | coll.Pick .config.rds.primary ->>
     - name: mysql-cluster
       base:
         apiVersion: rds.aws.upbound.io/v1beta1
         kind: Cluster
-        metadata:
-          name: mysql-cluster
         spec:
           forProvider:
             allowMajorVersionUpgrade: << .config.rds.mysql.allowMajorVersionUpgrade >> #Enable to allow major engine version upgrades when changing engine versions. Defaults to false.
@@ -147,12 +160,11 @@ spec:
             <<- end >>
             applyImmediately: << .config.rds.mysql.applyImmediately >> #The target backtrack window, in seconds. Only available for aurora and aurora-mysql engines currently.  Defaults to 0. Must be between 0 and 259200 (72 hours)
             backupRetentionPeriod: << .config.rds.mysql.backupRetentionPeriod >> # The days to retain backups for. Default 1
-            clusterMembers: # List of RDS Instances that are a part of this cluster
-              - mysql-instances-0 #TODO
+            clusterMembers: [] # List of RDS Instances that are a part of this cluster
             copyTagsToSnapshot: true # Copy all Cluster tags to snapshots. Default is false.
             databaseName: << .config.rds.mysql.databaseName >> #Name for an automatically created database on cluster creation.
-            dbClusterParameterGroupName: mysql-cluster-parameter-group #TODO #A cluster parameter group to associate with the cluster.
-            dbInstanceParameterGroupName: mysql-parameter-group #TODO # Instance parameter group to associate with all instances of the DB cluster. The db_instance_parameter_group_name parameter is only valid in combination with the allow_major_version_upgrade parameter.
+            dbClusterParameterGroupName: "" #A cluster parameter group to associate with the cluster.
+            dbInstanceParameterGroupName: "" # Instance parameter group to associate with all instances of the DB cluster. The db_instance_parameter_group_name parameter is only valid in combination with the allow_major_version_upgrade parameter.
             dbSubnetGroupNameRef: 
               name: mysql-dbsubnetgroup-<< .config.aws.region >> #A DB subnet group to associate with this DB instance. 
             deletionProtection: << .config.rds.mysql.deletionProtection >>
@@ -197,6 +209,18 @@ spec:
             toFieldPath: spec.forProvider.deletionProtection
             policy:
               fromFieldPath: Required
+          - fromFieldPath: status.share.clusterInstanceId
+            toFieldPath: spec.forProvider.clusterMembers[0]
+            policy:
+              fromFieldPath: Required
+          - fromFieldPath: status.share.parameterGroupId
+            toFieldPath: spec.forProvider.dbInstanceParameterGroupName
+            policy:
+              fromFieldPath: Required
+          - fromFieldPath: status.share.clusterParameterGroupId
+            toFieldPath: spec.forProvider.dbClusterParameterGroupName
+            policy:
+              fromFieldPath: Required
           - fromFieldPath: spec.skipFinalSnapshot
             toFieldPath: spec.forProvider.skipFinalSnapshot
           - fromFieldPath: spec.allocatedStorage
@@ -209,4 +233,8 @@ spec:
             toFieldPath: spec.forProvider.preferredMaintenanceWindow
           - fromFieldPath: spec.applyImmediately
             toFieldPath: spec.forProvider.applyImmediately
-            
+          - type: ToCompositeFieldPath
+            fromFieldPath: status.atProvider.id
+            toFieldPath: status.share.clusterId
+            policy:
+              fromFieldPath: Optional  

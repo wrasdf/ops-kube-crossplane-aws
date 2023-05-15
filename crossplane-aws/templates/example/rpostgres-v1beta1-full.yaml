@@ -12,11 +12,16 @@ spec:
   parameterGroupFamily: aurora-postgresql14
   deletionProtection: false
   dbClusterInstanceClass: db.r5.large
-  dbInstanceCount: 2 ## how ??
+  dbInstanceCount: 1
   skipFinalSnapshot: true
-  allocatedStorage: 2 # The amount of storage in gibibytes (GiB)
   performanceInsightsEnabled: true
   backupRetentionPeriod: 7
   preferredBackupWindow: 12:00-13:00
   preferredMaintenanceWindow: wed:10:00-wed:11:00
   applyImmediately: true
+  compositionSelector:
+    matchLabels:
+      version: v1beta1
+      provider: aws
+      cluster: regional
+      engine: postgres

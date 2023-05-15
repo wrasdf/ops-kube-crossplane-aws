@@ -13,3 +13,9 @@ spec:
   deletionProtection: false
   dbClusterInstanceClass: db.r5.large
   dbInstanceCount: 1
+  compositionSelector:
+    matchLabels:
+      version: v1beta1
+      provider: aws
+      cluster: regional
+      engine: postgres

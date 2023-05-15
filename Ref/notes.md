@@ -65,3 +65,13 @@ Last Transition Time:  2023-05-15T02:29:59Z
 ```
 2023-05-12T04:52:53Z	DEBUG	events	cannot run plan: plan failed: Instance cannot be destroyed: Resource aws_db_parameter_group.regional-postgres-deleteme-v1-4gr79-tpwhc has lifecycle.prevent_destroy set, but the plan calls for this resource to be destroyed. To avoid this error and continue with the plan, either disable lifecycle.prevent_destroy or reduce the scope of the plan using the -target flag.	{"type": "Warning", "object": {"kind":"ParameterGroup","name":"regional-postgres-deleteme-v1-4gr79-tpwhc","uid":"9983e2fd-688e-41e6-8235-d79e19e34c0c","apiVersion":"rds.aws.upbound.io/v1beta1","resourceVersion":"224178782"}, "reason": "CannotObserveExternalResource"}
 ```
+
+```
+  - lastTransitionTime: "2023-05-15T03:20:07Z"
+    message: 'observe failed: cannot schedule a native provider during observe: 184d47a1-32b7-4dfb-b4cc-b19df51191a4:
+      cannot schedule native Terraform provider process: native provider reuse budget
+      has been exceeded: invocationCount: 114, ttl: 100'
+    reason: ReconcileError
+    status: "False"
+    type: Synced
+```
