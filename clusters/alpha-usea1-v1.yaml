@@ -45,7 +45,7 @@ rds:
     autoMinorVersionUpgrade: false
     applyImmediately: false
     backupRetentionPeriod: 3
-    databaseName: postgres
+    databaseName: composition
     deletionProtection: false
     engine: aurora-postgresql
     engineMode: provisioned
@@ -68,11 +68,11 @@ rds:
     autoMinorVersionUpgrade: false
     applyImmediately: false
     backupRetentionPeriod: 3
-    databaseName: mysql
+    databaseName: composition
     deletionProtection: false
     engine: aurora-mysql
     engineMode: provisioned
-    engineVersion: 8.0.mysql_aurora.3.01.0
+    engineVersion: 8.0.mysql_aurora.3.03.1
     family: aurora-mysql8.0
     dbClusterInstanceClass: db.r6g.xlarge
     preferredBackupWindow: 12:00-13:00
