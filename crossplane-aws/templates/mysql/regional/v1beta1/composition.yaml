@@ -3,6 +3,11 @@ apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
   name: xrmysql.aws.v1beta1.afterpay.cloud
+  labels:
+    version: v1beta1
+    provider: aws
+    cluster: regional
+    engine: mysql
 spec:
   writeConnectionSecretsToNamespace: upbound-system
   compositeTypeRef:
@@ -133,7 +138,6 @@ spec:
           name: mysql-cluster
         spec:
           forProvider:
-            allocatedStorage: << .config.rds.mysql.allocatedStorage >> #The amount of storage in gibibytes (GiB) to allocate to each DB instance in the Multi-AZ DB cluster. 
             allowMajorVersionUpgrade: << .config.rds.mysql.allowMajorVersionUpgrade >> #Enable to allow major engine version upgrades when changing engine versions. Defaults to false.
             availabilityZones:
             <<- range $value := $replica >>
@@ -193,10 +197,6 @@ spec:
             toFieldPath: spec.forProvider.deletionProtection
             policy:
               fromFieldPath: Required
-          - fromFieldPath: spec.dbClusterInstanceClass
-            toFieldPath: spec.forProvider.dbClusterInstanceClass
-            policy:
-              fromFieldPath: Required    
           - fromFieldPath: spec.skipFinalSnapshot
             toFieldPath: spec.forProvider.skipFinalSnapshot
           - fromFieldPath: spec.allocatedStorage

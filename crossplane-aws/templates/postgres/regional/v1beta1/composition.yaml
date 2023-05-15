@@ -3,6 +3,11 @@ apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
   name: xrpostgres.aws.v1beta1.afterpay.cloud
+  labels:
+    version: v1beta1
+    provider: aws
+    cluster: regional
+    engine: postgres
 spec:
   writeConnectionSecretsToNamespace: upbound-system
   compositeTypeRef:
@@ -132,7 +137,6 @@ spec:
               - postgres-instances-0 #TODO
             copyTagsToSnapshot: true # Copy all Cluster tags to snapshots. Default is false.
             databaseName: << .config.rds.postgres.databaseName >> #Name for an automatically created database on cluster creation.
-            dbClusterInstanceClass: << .config.rds.postgres.dbClusterInstanceClass >> # The compute and memory capacity of each DB instance in the Multi-AZ DB cluster, for example db.m6g.xlarge. Not all DB instance classes are available in all AWS Regions, or for all database engines. For the full list of DB instance classes and availability for your engine, see DB instance class in the Amazon RDS User Guide. (This setting is required to create a Multi-AZ DB cluster).
             dbClusterParameterGroupName: postgres-cluster-parameter-group #TODO #A cluster parameter group to associate with the cluster.
             dbInstanceParameterGroupName: postgres-parameter-group #TODO # Instance parameter group to associate with all instances of the DB cluster. The db_instance_parameter_group_name parameter is only valid in combination with the allow_major_version_upgrade parameter.
             dbSubnetGroupNameRef: 
@@ -174,10 +178,6 @@ spec:
               fromFieldPath: Required  
           - fromFieldPath: spec.deletionProtection
             toFieldPath: spec.forProvider.deletionProtection
-            policy:
-              fromFieldPath: Required
-          - fromFieldPath: spec.dbClusterInstanceClass
-            toFieldPath: spec.forProvider.dbClusterInstanceClass
             policy:
               fromFieldPath: Required
           - fromFieldPath: spec.skipFinalSnapshot

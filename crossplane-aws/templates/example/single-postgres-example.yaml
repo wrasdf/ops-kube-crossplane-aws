@@ -56,7 +56,7 @@ spec:
     preferredMaintenanceWindow: wed:10:00-wed:11:00 #The weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
   providerConfigRef:
     name: default
-    
+
 ---
 apiVersion: rds.aws.upbound.io/v1beta1
 kind: Cluster
@@ -76,7 +76,6 @@ spec:
       - postgres-instances-0 #TODO
     copyTagsToSnapshot: true # Copy all Cluster tags to snapshots. Default is false.
     databaseName: postgres #Name for an automatically created database on cluster creation.
-    dbClusterInstanceClass: db.r6g.xlarge # The compute and memory capacity of each DB instance in the Multi-AZ DB cluster, for example db.m6g.xlarge.
     dbClusterParameterGroupName: postgres-cluster-parameter-group #TODO #A cluster parameter group to associate with the cluster.
     dbInstanceParameterGroupName: postgres-parameter-group #TODO # Instance parameter group to associate with all instances of the DB cluster. The db_instance_parameter_group_name parameter is only valid in combination with the allow_major_version_upgrade parameter.
     dbSubnetGroupNameRef: 
