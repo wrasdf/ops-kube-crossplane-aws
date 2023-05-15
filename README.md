@@ -15,9 +15,8 @@
   - eg: 1 instance / 2 instances / 3 instances
 - Conditions in composition -> Not Support
   - eg: if/else
-- Pass parameters between resources ?
 
-#### Command
+### Command
 - ./bin/compile.sh alpha-usea1-v1
 
 ### Bugs:
@@ -27,11 +26,6 @@
     Last Transition Time:  2023-05-12T06:39:31Z
     Message:               apply failed: creating RDS Cluster (postgres-cluster): InvalidParameterCombination: DBClusterInstanceClass isn't supported for DB engine aurora-postgresql.
 ```
-- https://github.com/hashicorp/terraform-provider-aws/issues/30596
-- Command:
-  $ aws rds describe-orderable-db-instance-options --engine aurora-postgresql --engine-version "14.6" \
-    --query "OrderableDBInstanceOptions[].{DBInstanceClass:DBInstanceClass,SupportedEngineModes:SupportedEngineModes[0]}" --output table
-
 
 `kubectl describe Cluster.rds.aws.upbound.io mysql-cluster`
 ```
@@ -42,5 +36,11 @@
     Reason:                ApplyFailure
     Status:                False
 ```
-- Command:
-  $ aws rds describe-orderable-db-instance-options --engine aurora-mysql --engine-version "8.0.mysql_aurora.3.01.0" --query "OrderableDBInstanceOptions[].{DBInstanceClass:DBInstanceClass,SupportedEngineModes:SupportedEngineModes[0]}" --output table
+
+- https://github.com/hashicorp/terraform-provider-aws/issues/30596
+
+### Errors:
+
+```
+2023-05-12T04:52:53Z	DEBUG	events	cannot run plan: plan failed: Instance cannot be destroyed: Resource aws_db_parameter_group.regional-postgres-deleteme-v1-4gr79-tpwhc has lifecycle.prevent_destroy set, but the plan calls for this resource to be destroyed. To avoid this error and continue with the plan, either disable lifecycle.prevent_destroy or reduce the scope of the plan using the -target flag.	{"type": "Warning", "object": {"kind":"ParameterGroup","name":"regional-postgres-deleteme-v1-4gr79-tpwhc","uid":"9983e2fd-688e-41e6-8235-d79e19e34c0c","apiVersion":"rds.aws.upbound.io/v1beta1","resourceVersion":"224178782"}, "reason": "CannotObserveExternalResource"}
+```
