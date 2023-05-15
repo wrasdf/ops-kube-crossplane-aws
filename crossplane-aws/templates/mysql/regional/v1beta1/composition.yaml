@@ -46,6 +46,8 @@ spec:
                 value: '1'
               - name: server_audit_events
                 value: CONNECT,QUERY_DCL,QUERY_DDL
+          providerConfigRef:
+            name: default
         patches:
           - type: PatchSet
             patchSetName: metadata
@@ -67,6 +69,8 @@ spec:
             parameter:
               - name: "max_connections"
                 value: "1000"
+          providerConfigRef:
+            name: default
         patches:
           - type: PatchSet
             patchSetName: metadata
@@ -98,6 +102,8 @@ spec:
             performanceInsightsEnabled: << .config.rds.mysql.performanceInsightsEnabled >>
             preferredBackupWindow: << .config.rds.mysql.preferredBackupWindow >> #The daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter.Time in UTC.
             preferredMaintenanceWindow: << .config.rds.mysql.preferredMaintenanceWindow >> #The weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
+          providerConfigRef:
+            name: default  
         patches:
           - type: PatchSet
             patchSetName: metadata

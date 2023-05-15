@@ -15,4 +15,6 @@ spec:
     <<- range $repicaSubnetId := $value.dbSubnetIds >>
       - << $repicaSubnetId >>
     <<- end >>
+  providerConfigRef:
+    name: default
 <<- end >>

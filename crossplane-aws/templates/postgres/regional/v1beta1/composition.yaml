@@ -30,6 +30,8 @@ spec:
               - applyMethod: pending-reboot
                 name: rds.logical_replication
                 value: "1"
+          providerConfigRef:
+            name: default      
         patches:
           - type: PatchSet
             patchSetName: metadata
@@ -52,6 +54,8 @@ spec:
               - applyMethod: pending-reboot
                 name: shared_preload_libraries
                 value: pg_stat_statements.pgaudit
+          providerConfigRef:
+            name: default      
         patches:
           - type: PatchSet
             patchSetName: metadata
@@ -83,6 +87,8 @@ spec:
             performanceInsightsEnabled: << .config.rds.postgres.performanceInsightsEnabled >>
             preferredBackupWindow: << .config.rds.postgres.preferredBackupWindow >> #The daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter.Time in UTC.
             preferredMaintenanceWindow: << .config.rds.postgres.preferredMaintenanceWindow >> #The weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
+          providerConfigRef:
+            name: default  
         patches:
           - type: PatchSet
             patchSetName: metadata
