@@ -59,7 +59,7 @@ spec:
             parameter:
               - applyMethod: pending-reboot
                 name: shared_preload_libraries
-                value: pg_stat_statements.pgaudit
+                value: pg_stat_statements
           providerConfigRef:
             name: default      
         patches:
