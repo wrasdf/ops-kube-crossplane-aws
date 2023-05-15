@@ -123,7 +123,6 @@ spec:
           name: postgres-cluster
         spec:
           forProvider:
-            allocatedStorage: << .config.rds.postgres.allocatedStorage >> #The amount of storage in gibibytes (GiB) to allocate to each DB instance in the Multi-AZ DB cluster. 
             allowMajorVersionUpgrade: << .config.rds.postgres.allowMajorVersionUpgrade >> #Enable to allow major engine version upgrades when changing engine versions. Defaults to false.
             availabilityZones:
             <<- range $value := $replica >>

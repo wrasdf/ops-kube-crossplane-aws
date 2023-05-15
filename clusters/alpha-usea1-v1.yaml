@@ -40,7 +40,6 @@ rds:
         - eu-west-1c
       kmsKeyId: arn:aws:kms:eu-west-1:568431661506:key/ce30efba-2e73-474b-8e9f-069d4e948dc2  
   postgres:
-    allocatedStorage: 1
     allowMajorVersionUpgrade: false
     autoMinorVersionUpgrade: false
     applyImmediately: false
