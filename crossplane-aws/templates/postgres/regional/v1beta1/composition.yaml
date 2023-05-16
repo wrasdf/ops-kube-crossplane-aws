@@ -19,6 +19,75 @@ spec:
         - fromFieldPath: metadata.labels
           toFieldPath: metadata.labels  
   resources:
+    << $replica := .config.rds.replicas | coll.Pick .config.rds.primary ->>
+    - name: postgres-security-group
+      base:
+        apiVersion: ec2.aws.upbound.io/v1beta1
+        kind: SecurityGroup
+        spec:
+          forProvider:
+            name: postgres-aurora-securitygroup
+            region: << .config.aws.region >>
+            <<- range $value := $replica >>
+            vpcId: << $value.vpcId >>
+            <<- end >>
+        patches:
+          - type: PatchSet
+            patchSetName: metadata
+          - type: ToCompositeFieldPath
+            fromFieldPath: status.atProvider.id
+            toFieldPath: status.share.securityGroupId
+            policy:
+              fromFieldPath: Optional
+    
+    - name: postgres-ingress-security-group-rule
+      base:
+        apiVersion: ec2.aws.upbound.io/v1beta1
+        kind: SecurityGroupRule
+        metadata:
+          name: postgres-ingress-rules
+        spec:
+          forProvider:
+            type: ingress
+            region: << .config.aws.region >>
+            cidrBlocks:
+             <<- range $value := $replica >>
+              <<- range $cidr := $value.dbIngressCIDRs >>
+              - << $cidr >>
+              <<- end >>
+            <<- end >>
+            fromPort: << .config.rds.postgres.port >>
+            toPort: << .config.rds.postgres.port >>
+            protocol: tcp
+        patches:
+          - type: PatchSet
+            patchSetName: metadata
+          - fromFieldPath: status.share.securityGroupId
+            toFieldPath: spec.securityGroupId
+            policy:
+              fromFieldPath: Required      
+
+    - name: postgres-egress-security-group-rule
+      base:
+        apiVersion: ec2.aws.upbound.io/v1beta1
+        kind: SecurityGroupRule
+        spec:
+          forProvider:
+            type: egress
+            region: << .config.aws.region >>
+            cidrBlocks:
+              - 0.0.0.0/0
+            fromPort: 443
+            toPort: 443
+            protocol: tcp
+        patches:
+          - type: PatchSet
+            patchSetName: metadata
+          - fromFieldPath: status.share.securityGroupId
+            toFieldPath: spec.securityGroupId
+            policy:
+              fromFieldPath: Required
+
     - name: postgres-cluster-parameter-group
       base:
         apiVersion: rds.aws.upbound.io/v1beta1
@@ -129,7 +198,7 @@ spec:
             policy:
               fromFieldPath: Optional  
 
-    << $replica := .config.rds.replicas | coll.Pick .config.rds.primary ->>
+    
     - name: postgres-cluster
       base:
         apiVersion: rds.aws.upbound.io/v1beta1
