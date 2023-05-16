@@ -13,6 +13,11 @@
   - kmsKeyIdRef
   - kmsKeyIdSelector
 
+- SecurityGroupRule 
+  - securityGroupId
+  - securityGroupIdRef
+  - securityGroupIdSelector
+
 ### Composition Details
 
 - patches
@@ -25,6 +30,9 @@
   - https://github.com/upbound/provider-terraform/blob/main/examples/transition/02-composition-tf-and-native/composition.yaml
   - https://pet2cattle.com/2022/03/crossplane-status-across-objects
 
+
+### Other Ref:
+- https://docs.gomplate.ca/
 
 ### Commands
 - aws rds describe-db-engine-versions --engine aurora-postgresql --query '*[].[EngineVersion]' --output text > aurora-postgresql-engine.md
