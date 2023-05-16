@@ -10,6 +10,12 @@ kubectl apply -f _build/alpha-usea1-v1/example/rmysql-v1beta1.yaml
 
 sleep 30
 
+
+echo ""
+echo "SecurityGroup =========="
+echo ""
+kubectl get SecurityGroup regional-mysql-deleteme-v1-gnvsj-rqcbr -o yaml
+
 echo ""
 echo "ClusterParameterGroup =========="
 echo ""

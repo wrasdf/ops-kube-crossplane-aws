@@ -20,6 +20,75 @@ spec:
         - fromFieldPath: metadata.labels
           toFieldPath: metadata.labels
   resources:
+    << $replica := .config.rds.replicas | coll.Pick .config.rds.primary ->>
+    - name: mysql-security-group
+      base:
+        apiVersion: ec2.aws.upbound.io/v1beta1
+        kind: SecurityGroup
+        spec:
+          forProvider:
+            name: mysql-aurora-securitygroup
+            region: << .config.aws.region >>
+            <<- range $value := $replica >>
+            vpcId: << $value.vpcId >>
+            <<- end >>
+        patches:
+          - type: PatchSet
+            patchSetName: metadata
+          - type: ToCompositeFieldPath
+            fromFieldPath: status.atProvider.id
+            toFieldPath: status.share.securityGroupId
+            policy:
+              fromFieldPath: Optional
+    
+    - name: mysql-ingress-security-group-rule
+      base:
+        apiVersion: ec2.aws.upbound.io/v1beta1
+        kind: SecurityGroupRule
+        metadata:
+          name: mysql-ingress-rules
+        spec:
+          forProvider:
+            type: ingress
+            region: << .config.aws.region >>
+            cidrBlocks:
+            <<- range $value := $replica >>
+              <<- range $cidr := $value.dbIngressCIDRs >>
+              - << $cidr >>
+              <<- end >>
+            <<- end >>
+            fromPort: << .config.rds.mysql.port >>
+            toPort: << .config.rds.mysql.port >>
+            protocol: tcp
+        patches:
+          - type: PatchSet
+            patchSetName: metadata
+          - fromFieldPath: status.share.securityGroupId
+            toFieldPath: spec.securityGroupId
+            policy:
+              fromFieldPath: Required      
+
+    - name: mysql-egress-security-group-rule
+      base:
+        apiVersion: ec2.aws.upbound.io/v1beta1
+        kind: SecurityGroupRule
+        spec:
+          forProvider:
+            type: egress
+            region: << .config.aws.region >>
+            cidrBlocks:
+              - 0.0.0.0/0
+            fromPort: 443
+            toPort: 443
+            protocol: tcp
+        patches:
+          - type: PatchSet
+            patchSetName: metadata
+          - fromFieldPath: status.share.securityGroupId
+            toFieldPath: spec.securityGroupId
+            policy:
+              fromFieldPath: Required
+
     - name: mysql-cluster-parameter-group
       base:
         apiVersion: rds.aws.upbound.io/v1beta1
