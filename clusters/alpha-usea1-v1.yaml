@@ -8,6 +8,11 @@ rds:
   replicas:
     usea1:
       region: us-east-1
+      vpcId: vpc-00890be277ac8ad8e
+      dbIngressCIDRs:
+        - 10.229.24.0/22
+        - 10.229.28.0/22
+        - 10.229.32.0/22
       dbSubnetIds:
         - subnet-090cae6f93a9568ef
         - subnet-0e8d2312ca5b96af6
@@ -19,6 +24,11 @@ rds:
       kmsKeyId: arn:aws:kms:us-east-1:568431661506:key/d8581ddd-3f1c-44b7-8e69-1dd61c1b5cbe
     apse2:
       region: ap-southeast-2
+      vpcId: vpc-0f1a619557f88907b
+      dbIngressCIDRs:
+        - 10.227.88.0/22
+        - 10.227.92.0/22
+        - 10.227.96.0/22
       dbSubnetIds:
         - subnet-0c42c08d9c7b354e7
         - subnet-097e4bed407976fdf
@@ -30,6 +40,11 @@ rds:
       kmsKeyId: arn:aws:kms:ap-southeast-2:568431661506:key/41587c13-0864-4a5c-b22b-2c1308ff0928  
     euwe1:
       region: eu-west-1
+      vpcId: vpc-02f27485ebe91f295
+      dbIngressCIDRs:
+        - 10.240.24.0/22
+        - 10.240.28.0/22
+        - 10.240.32.0/22
       dbSubnetIds:
         - subnet-02dc9435e0e69497f
         - subnet-006dcc7944de4ac45

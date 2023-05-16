@@ -23,6 +23,7 @@
 
 - Passing Parameters between resources -> need to be tested
   - https://github.com/upbound/provider-terraform/blob/main/examples/transition/02-composition-tf-and-native/composition.yaml
+  - https://pet2cattle.com/2022/03/crossplane-status-across-objects
 
 
 ### Commands
@@ -71,6 +72,18 @@ Last Transition Time:  2023-05-15T02:29:59Z
     message: 'observe failed: cannot schedule a native provider during observe: 184d47a1-32b7-4dfb-b4cc-b19df51191a4:
       cannot schedule native Terraform provider process: native provider reuse budget
       has been exceeded: invocationCount: 114, ttl: 100'
+    reason: ReconcileError
+    status: "False"
+    type: Synced
+```
+
+```
+- lastTransitionTime: "2023-05-16T05:20:26Z"
+    message: 'observe failed: cannot run plan: plan failed: Instance cannot be destroyed:
+      Resource aws_security_group.mysql-security-group has lifecycle.prevent_destroy
+      set, but the plan calls for this resource to be destroyed. To avoid this error
+      and continue with the plan, either disable lifecycle.prevent_destroy or reduce
+      the scope of the plan using the -target flag.'
     reason: ReconcileError
     status: "False"
     type: Synced

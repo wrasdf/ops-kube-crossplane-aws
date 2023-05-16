@@ -6,9 +6,10 @@ metadata:
   namespace: pe
   labels:
     version: v1beta1
+    rerun: "true"
 spec:
   datbaseName: mysql
-  engineVersion: "8.0"
+  engineVersion: 8.0.mysql_aurora.3.03.1
   parameterGroupFamily: aurora-mysql8.0
   deletionProtection: false
   dbClusterInstanceClass: db.r5.large
@@ -19,3 +20,4 @@ spec:
       provider: aws
       cluster: regional
       engine: mysql
+      spike: "true"

@@ -75,6 +75,17 @@ spec:
             parameter:
               - name: "max_connections"
                 value: "1000"
+              - name: "slow_query_log"
+                value: "1"
+              - name: "max_allowed_packet"
+                value: "134217728"
+              - name: "log_bin_trust_function_creators"
+                value: "1"
+              - name: "optimizer_switch"
+                value: "block_nested_loop=off"
+              - name: performance_schema
+                value: "1"
+                applyMethod: pending-reboot
           providerConfigRef:
             name: default
         patches:

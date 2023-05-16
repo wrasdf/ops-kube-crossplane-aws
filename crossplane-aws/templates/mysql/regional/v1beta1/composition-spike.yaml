@@ -1,0 +1,92 @@
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: xrmysql.aws.v1beta1.afterpay.cloud
+  labels:
+    version: v1beta1
+    provider: aws
+    cluster: regional
+    engine: mysql
+    spike: "true"
+spec:
+  writeConnectionSecretsToNamespace: upbound-system
+  compositeTypeRef:
+    apiVersion: aws.v1beta1.afterpay.cloud/v1beta1
+    kind: XRMysql
+  patchSets:
+    - name: metadata
+      patches:
+        - fromFieldPath: metadata.labels
+          toFieldPath: metadata.labels
+  resources:
+    - name: mysql-cluster-parameter-group
+      base:
+        apiVersion: rds.aws.upbound.io/v1beta1
+        kind: ClusterParameterGroup
+        spec:
+          forProvider:
+            region: << .config.aws.region >>
+            family: << .config.rds.mysql.family >>
+            parameter:
+              - name: character_set_server
+                value: utf8
+              - name: character_set_client
+                value: utf8
+              - name: time_zone
+                value: UTC
+              - name: character_set_connection
+                value: utf8
+              - name: character_set_database
+                value: utf8
+              - name: character_set_results
+                value: utf8
+              - name: binlog_format
+                value: ROW
+                applyMethod: pending-reboot
+              - name: server_audit_logging
+                value: '1'
+              - name: server_audit_logs_upload
+                value: '1'
+              - name: server_audit_events
+                value: CONNECT,QUERY_DCL,QUERY_DDL
+          providerConfigRef:
+            name: default
+        patches:
+          - type: PatchSet
+            patchSetName: metadata
+          - fromFieldPath: spec.parameterGroupFamily
+            toFieldPath: spec.forProvider.family
+            policy:
+              fromFieldPath: Required
+          - type: ToCompositeFieldPath
+            fromFieldPath: status.atProvider.id
+            toFieldPath: status.share.clusterParameterGroupId
+            policy:
+              fromFieldPath: Optional
+
+    - name: mysql-parameter-group
+      base:
+        apiVersion: rds.aws.upbound.io/v1beta1
+        kind: ParameterGroup
+        spec:
+          forProvider:
+            region: << .config.aws.region >>
+            family: << .config.rds.mysql.family >>
+            parameter:
+              - name: "max_connections"
+                value: "1000"
+          providerConfigRef:
+            name: default
+        patches:
+          - type: PatchSet
+            patchSetName: metadata
+          - fromFieldPath: spec.parameterGroupFamily
+            toFieldPath: spec.forProvider.family
+            policy:
+              fromFieldPath: Required
+          - type: ToCompositeFieldPath
+            fromFieldPath: status.atProvider.id
+            toFieldPath: status.share.parameterGroupId
+            policy:
+              fromFieldPath: Optional
