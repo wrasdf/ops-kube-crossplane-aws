@@ -1,4 +1,53 @@
 ---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: SecurityGroup
+metadata:
+  name: postgres-security-group
+spec:
+  forProvider:
+    name: postgres-aurora-securitygroup
+    region: us-east-1
+    tags:
+      Name: postgres-aurora
+    vpcId: vpc-00890be277ac8ad8e  
+
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: SecurityGroupRule
+metadata:
+  name: postgres-ingress-rules
+spec:
+  forProvider:
+    type: ingress
+    region: us-east-1
+    cidrBlocks:
+      - 10.229.24.0/22
+      - 10.229.28.0/22
+      - 10.229.32.0/22
+    fromPort: 5432
+    toPort: 5432
+    protocol: tcp
+    securityGroupIdRef:
+      name: postgres-security-group
+
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: SecurityGroupRule
+metadata:
+  name: postgres-egress-rules
+spec:
+  forProvider:
+    type: egress
+    region: us-east-1
+    cidrBlocks:
+      - 0.0.0.0/0
+    fromPort: 443
+    toPort: 443
+    protocol: tcp
+    securityGroupIdRef:
+      name: postgres-security-group
+
+---
 apiVersion: rds.aws.upbound.io/v1beta1
 kind: ClusterParameterGroup
 metadata:
@@ -97,5 +146,7 @@ spec:
     region: us-east-1
     storageEncrypted: true # Specifies whether the DB cluster is encrypted. The default is false for provisioned engine_mode and true for serverless engine_mode. When restoring an unencrypted snapshot_identifier, the kms_key_id argument must be provided to encrypt the restored cluster.
     skipFinalSnapshot: true
+    vpcSecurityGroupIdRefs:
+      - name: postgres-security-group
   providerConfigRef:
     name: default
