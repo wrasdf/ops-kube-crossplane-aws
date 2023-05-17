@@ -12,18 +12,14 @@ spec:
   skipFinalSnapshot: true
   deletionProtection: false
   repicas:
+    - name: usea1
+      type: primary
+      dbInstanceCount: 1
+      dbClusterInstanceClass: db.r5.large  
     - name: spse2
       type: primary
-      dbInstanceCount: 2
+      dbInstanceCount: 1
       dbClusterInstanceClass: db.r6.4xlarge
-    - name: apse1
-      type: repica
-      dbInstanceCount: 1
-      dbClusterInstanceClass: db.r5.large
-    - name: usea1
-      type: repica
-      dbInstanceCount: 1
-      dbClusterInstanceClass: db.r5.large
     - name: uswe2
       type: repica
       dbInstanceCount: 1
