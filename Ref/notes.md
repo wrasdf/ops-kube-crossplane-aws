@@ -82,6 +82,14 @@ Last Transition Time:  2023-05-15T02:29:59Z
     Message:               apply failed: creating RDS Cluster (mysql-cluster-ap-southeast-2): InvalidParameterCombination: Cannot specify database name for cross region replication cluster
                            status code: 400, request id: ad62fdbf-4446-4cb6-8e62-8311136e0b08:
 ```
+```
+    Last Transition Time:  2023-05-17T05:35:50Z
+    Message:               apply failed: creating RDS Cluster (mysql-cluster-ap-southeast-2): InvalidParameterCombination: Cannot specify user name for cross region replication cluster
+                           status code: 400, request id: 5da7df6f-8bb4-41bb-a932-de8d81250356:
+    Reason:                ApplyFailure
+    Status:                False
+    Type:                  LastAsyncOperation
+```
 
 ### unknown Errors:
 
@@ -97,6 +105,17 @@ Last Transition Time:  2023-05-15T02:29:59Z
     reason: ReconcileError
     status: "False"
     type: Synced
+```
+
+```
+    Last Transition Time:  2023-05-17T05:17:38Z
+    Reason:                Available
+    Status:                True
+    Type:                  Ready
+    Last Transition Time:  2023-05-17T05:22:41Z
+    Message:               observe failed: cannot schedule a native provider during observe: 9330c5d1-6d02-416d-81f8-12b260c0e087: cannot schedule native Terraform provider process: native provider reuse budget has been exceeded: invocationCount: 113, ttl: 100
+    Reason:                ReconcileError
+    Status:                False
 ```
 
 ```

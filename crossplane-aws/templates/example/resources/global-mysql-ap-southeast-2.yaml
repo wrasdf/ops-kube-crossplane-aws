@@ -167,11 +167,6 @@ spec:
     iamDatabaseAuthenticationEnabled: true # Specifies whether or not mappings of AWS Identity and Access Management (IAM) accounts to database accounts is enabled. Please see AWS Documentation for availability and limitations.
     globalClusterIdentifier: global-mysql-cluster-us-east-1 # The global cluster identifier specified on aws_rds_global_cluster.
     kmsKeyId: arn:aws:kms:ap-southeast-2:568431661506:key/41587c13-0864-4a5c-b22b-2c1308ff0928 #The ARN for the KMS encryption key. Default: managed `aws/rds` key. When specifying kms_key_id, storage_encrypted needs to be set to true.
-    masterUsername: dbadmin
-    masterPasswordSecretRef:
-      key: password
-      name: rmysql-dbadmin
-      namespace: upbound-system
     networkType: IPV4
     port: 3306
     preferredBackupWindow: 12:00-13:00 #The daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter.Time in UTC.
