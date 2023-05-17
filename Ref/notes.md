@@ -69,6 +69,20 @@ Last Transition Time:  2023-05-15T02:29:59Z
     Message:               apply failed: creating RDS Cluster (postgres-cluster): InvalidParameterCombination: DBClusterInstanceClass isn't supported for DB engine aurora-postgresql.
 ```
 
+```
+    Last Transition Time:  2023-05-17T03:42:41Z
+    Message:               apply failed: creating RDS Cluster (mysql-cluster-ap-southeast-2): InvalidParameterValue: Value for storageEncrypted should match setting for global cluster global-mysql-cluster-us-east-1
+                           status code: 400, request id: c6bd3647-7b85-4341-80b6-a7a12a8f6ce9:
+    Reason:                ApplyFailure
+    Status:                False
+```
+
+```
+    Last Transition Time:  2023-05-17T04:52:33Z
+    Message:               apply failed: creating RDS Cluster (mysql-cluster-ap-southeast-2): InvalidParameterCombination: Cannot specify database name for cross region replication cluster
+                           status code: 400, request id: ad62fdbf-4446-4cb6-8e62-8311136e0b08:
+```
+
 ### unknown Errors:
 
 ```

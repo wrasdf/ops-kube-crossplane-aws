@@ -22,6 +22,8 @@
         Resource aws_security_group.mysql-security-group has lifecycle.prevent_destroy
         set, but the plan calls for this resource to be destroyed.'
   ```
+- After you apply the changes of existing resources, you don't know when the resources will be updated.
+  - You have to wait, and sometimes you have to delete resources and re-apply  again.
 
 ### Command
 - ./bin/compile.sh alpha-usea1-v1
