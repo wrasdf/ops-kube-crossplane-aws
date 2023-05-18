@@ -1,0 +1,23 @@
+---
+apiVersion: aws.v1beta1.afterpay.cloud/v1beta1
+kind: SG
+metadata:
+  name: mysql-security-group
+  namespace: pe
+  labels:
+    version: v1beta1
+spec:
+  region: us-east-1
+  vpcId: vpc-00890be277ac8ad8e
+  ingress:
+    CIDRs:
+      - 10.229.24.0/22
+      - 10.229.28.0/22
+      - 10.229.32.0/22
+    fromPort: 3306
+    toPort: 3306
+  egress:
+    CIDRs:
+      - 0.0.0.0/0
+    fromPort: 443
+    toPort: 443

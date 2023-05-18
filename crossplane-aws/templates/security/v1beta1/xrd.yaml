@@ -1,0 +1,68 @@
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xsg.aws.v1beta1.afterpay.cloud
+  labels:
+    version: v1beta1
+spec:
+  group: aws.v1beta1.afterpay.cloud
+  names:
+    kind: XSG
+    plural: xsg
+  claimNames:
+    kind: SG
+    plural: sg
+  versions:
+    - name: v1beta1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                region:
+                  type: string
+                vpcId:
+                  type: string
+                ingress:
+                  type: object  
+                  properties:
+                    CIDRs:
+                      type: array
+                      items:
+                        type: string
+                    fromPort:
+                      type: number
+                    toPort:
+                      type: number
+                egress:
+                  type: object
+                  properties:
+                    CIDRs:
+                      type: array
+                      items:
+                        type: string
+                    fromPort:
+                      type: number
+                    toPort:
+                      type: number
+              required:
+                - region
+                - vpcId
+                - ingress
+                - egress
+              x-kubernetes-preserve-unknown-fields: true
+            status:
+              type: object
+              properties:
+                share:
+                  description: Share status between resources
+                  type: object
+                  properties:
+                    securityGroupId:
+                      type: string
+                  x-kubernetes-preserve-unknown-fields: true    

@@ -64,7 +64,7 @@ spec:
           - type: PatchSet
             patchSetName: metadata
           - fromFieldPath: status.share.securityGroupId
-            toFieldPath: spec.securityGroupId
+            toFieldPath: spec.forProvider.securityGroupId
             policy:
               fromFieldPath: Required      
 
@@ -85,7 +85,7 @@ spec:
           - type: PatchSet
             patchSetName: metadata
           - fromFieldPath: status.share.securityGroupId
-            toFieldPath: spec.securityGroupId
+            toFieldPath: spec.forProvider.securityGroupId
             policy:
               fromFieldPath: Required
 

@@ -1,0 +1,103 @@
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: xsg.aws.v1beta1.afterpay.cloud
+  labels:
+    version: v1beta1
+    provider: aws
+spec:
+  writeConnectionSecretsToNamespace: upbound-system
+  compositeTypeRef:
+    apiVersion: aws.v1beta1.afterpay.cloud/v1beta1
+    kind: XSG
+  patchSets:
+    - name: metadata
+      patches:
+        - fromFieldPath: metadata.labels
+          toFieldPath: metadata.labels
+  resources:
+    - name: security-group
+      base:
+        apiVersion: ec2.aws.upbound.io/v1beta1
+        kind: SecurityGroup
+        spec:
+          forProvider:
+            name: composition-securitygroup
+        patches:
+          - type: PatchSet
+            patchSetName: metadata
+          - fromFieldPath: spec.region
+            toFieldPath: spec.forProvider.region
+          - fromFieldPath: spec.vpcId
+            toFieldPath: spec.forProvider.vpcId
+          - type: CombineFromComposite
+            combine:
+              variables:
+                - fromFieldPath: metadata.name
+              strategy: string
+              string:
+                fmt: "%s"
+            toFieldPath: spec.forProvider.name
+          - type: ToCompositeFieldPath
+            fromFieldPath: status.atProvider.id
+            toFieldPath: status.share.securityGroupId
+            policy:
+              fromFieldPath: Optional
+    
+    - name: ingress-security-group-rule
+      base:
+        apiVersion: ec2.aws.upbound.io/v1beta1
+        kind: SecurityGroupRule
+        metadata:
+          name: ingress-rules
+        spec:
+          forProvider:
+            type: ingress
+            region: ""
+            cidrBlocks: []
+            fromPort: 0
+            toPort: 0
+            protocol: tcp
+        patches:
+          - type: PatchSet
+            patchSetName: metadata
+          - fromFieldPath: spec.region
+            toFieldPath: spec.forProvider.region  
+          - fromFieldPath: spec.ingress.cidrBlocks
+            toFieldPath: spec.forProvider.cidrBlocks
+          - fromFieldPath: spec.ingress.fromPort
+            toFieldPath: spec.forProvider.fromPort
+          - fromFieldPath: spec.ingress.toPort
+            toFieldPath: spec.forProvider.toPort
+          - fromFieldPath: status.share.securityGroupId
+            toFieldPath: spec.forProvider.securityGroupId
+            policy:
+              fromFieldPath: Required
+    - name: egress-security-group-rule
+      base:
+        apiVersion: ec2.aws.upbound.io/v1beta1
+        kind: SecurityGroupRule
+        spec:
+          forProvider:
+            type: egress
+            region: ""
+            cidrBlocks: []
+            fromPort: 0
+            toPort: 0
+            protocol: tcp
+        patches:
+          - type: PatchSet
+            patchSetName: metadata
+          - fromFieldPath: spec.region
+            toFieldPath: spec.forProvider.region  
+          - fromFieldPath: spec.egress.cidrBlocks
+            toFieldPath: spec.forProvider.cidrBlocks
+          - fromFieldPath: spec.egress.fromPort
+            toFieldPath: spec.forProvider.fromPort
+          - fromFieldPath: spec.egress.toPort
+            toFieldPath: spec.forProvider.toPort  
+          - fromFieldPath: status.share.securityGroupId
+            toFieldPath: spec.forProvider.securityGroupId
+            policy:
+              fromFieldPath: Required
