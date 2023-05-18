@@ -39,6 +39,14 @@ spec:
               string:
                 fmt: "%s"
             toFieldPath: spec.forProvider.name
+          - type: CombineFromComposite
+            combine:
+              variables:
+                - fromFieldPath: metadata.name
+              strategy: string
+              string:
+                fmt: "%s"
+            toFieldPath: metadata.annotations[crossplane.io/external-name]
           - type: ToCompositeFieldPath
             fromFieldPath: status.atProvider.id
             toFieldPath: status.share.securityGroupId

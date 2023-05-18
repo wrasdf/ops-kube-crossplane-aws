@@ -2,7 +2,7 @@
 apiVersion: aws.v1beta1.afterpay.cloud/v1beta1
 kind: SG
 metadata:
-  name: mysql-security-group
+  name: mysql-security-group-v2
   namespace: pe
   labels:
     version: v1beta1
