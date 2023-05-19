@@ -47,12 +47,5 @@
 - After you apply the changes of existing resources, you don't know when the resources will be updated.
   - You have to wait, and sometimes you have to delete resources and re-apply  again.
 
-- Context:
-  - Composition with multiple resources, eg: SecurityGroup Composition
-  - Issue:
-    - When we create a `claim` based on the Composition, and it shows `Composite resource claim is waiting for a composite resource to become Ready`
-    - But we could not find the managed resource. eg: SecurityGroup
-    - It's hard to debug this issue, even from logs of pod `crossplane-provider-aws`
-
 ### Command
 - ./bin/compile.sh alpha-usea1-v1

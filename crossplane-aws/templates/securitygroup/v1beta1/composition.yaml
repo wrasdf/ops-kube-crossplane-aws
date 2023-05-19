@@ -24,6 +24,7 @@ spec:
         spec:
           forProvider:
             name: composition-securitygroup
+            region: ""
         patches:
           - type: PatchSet
             patchSetName: metadata
@@ -31,21 +32,9 @@ spec:
             toFieldPath: spec.forProvider.region
           - fromFieldPath: spec.vpcId
             toFieldPath: spec.forProvider.vpcId
-          - type: CombineFromComposite
-            combine:
-              variables:
-                - fromFieldPath: metadata.name
-              strategy: string
-              string:
-                fmt: "%s"
+          - fromFieldPath: metadata.name
             toFieldPath: spec.forProvider.name
-          - type: CombineFromComposite
-            combine:
-              variables:
-                - fromFieldPath: metadata.name
-              strategy: string
-              string:
-                fmt: "%s"
+          - fromFieldPath: metadata.name
             toFieldPath: metadata.annotations[crossplane.io/external-name]
           - type: ToCompositeFieldPath
             fromFieldPath: status.atProvider.id
@@ -80,6 +69,7 @@ spec:
             toFieldPath: spec.forProvider.securityGroupId
             policy:
               fromFieldPath: Required
+    
     - name: egress-security-group-rule
       base:
         apiVersion: ec2.aws.upbound.io/v1beta1
