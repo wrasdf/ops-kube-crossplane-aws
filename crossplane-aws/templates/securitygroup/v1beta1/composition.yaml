@@ -52,12 +52,11 @@ spec:
             toFieldPath: status.share.securityGroupId
             policy:
               fromFieldPath: Optional
+              
     - name: ingress-security-group-rule
       base:
         apiVersion: ec2.aws.upbound.io/v1beta1
         kind: SecurityGroupRule
-        metadata:
-          name: ingress-rules
         spec:
           forProvider:
             type: ingress

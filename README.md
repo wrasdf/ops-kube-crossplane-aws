@@ -2,13 +2,30 @@
 
 #### Investigate Scenarios
 
-- As a developer, I would like to create a regional postgres aurora cluster. (WIP)
+- As a developer, I would like to create a regional postgres aurora cluster.
+  - Works with managed resources
+  - Not working with composition
 
-- As a developer, I would like to create a global postgres aurora cluster.
+- As a developer, I would like to create a global postgres aurora cluster. (WIP)
+  - Works with managed resources
+  - Not working with composition
 
 - As a developer, I would like to create a regional mysql aurora cluster. (WIP)
+  - Works with managed resources
+  - Not working with composition
 
-- As a developer, I would like to create a global mysql aurora cluster.
+- As a developer, I would like to create a global mysql aurora cluster. (WIP)
+  - Works with managed resources
+  - Not working with composition
+
+- As a developer, I would like to create a backup for my existing cluster. (Manually from AWS console.)
+
+- As a developer, I would like to restore a regional cluster from a snapshot.
+  - Works with managed resources
+  - Not working with composition
+
+- As a developer, I would like to restore a global cluster from a snapshot. (Need to be tested)
+
 
 ### Limits
 - Dynamic create multiple base resources -> Not Support
