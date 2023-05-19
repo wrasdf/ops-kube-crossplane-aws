@@ -1,0 +1,182 @@
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: SecurityGroup
+metadata:
+  name: mysql-security-group
+spec:
+  forProvider:
+    name: mysql-aurora-security-group
+    region: us-east-1
+    tags:
+      Name: mysql-aurora
+    vpcId: vpc-00890be277ac8ad8e
+
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: SecurityGroupRule
+metadata:
+  name: mysql-ingress-rules
+spec:
+  forProvider:
+    type: ingress
+    region: us-east-1
+    cidrBlocks:
+      - 10.229.24.0/22
+      - 10.229.28.0/22
+      - 10.229.32.0/22
+    fromPort: 3306
+    toPort: 3306
+    protocol: tcp
+    securityGroupIdRef:
+      name: mysql-security-group
+
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: SecurityGroupRule
+metadata:
+  name: mysql-egress-rules
+spec:
+  forProvider:
+    type: egress
+    region: us-east-1
+    cidrBlocks:
+      - 0.0.0.0/0
+    fromPort: 443
+    toPort: 443
+    protocol: tcp
+    securityGroupIdRef:
+      name: mysql-security-group
+    
+---
+apiVersion: rds.aws.upbound.io/v1beta1
+kind: ClusterParameterGroup
+metadata:
+  name: mysql-cluster-parameter-group
+spec:
+  forProvider:
+    region: us-east-1
+    family: aurora-mysql8.0
+    parameter:
+      - name: character_set_server
+        value: utf8
+      - name: character_set_client
+        value: utf8
+      - name: time_zone
+        value: UTC
+      - name: character_set_connection
+        value: utf8
+      - name: character_set_database
+        value: utf8
+      - name: character_set_results
+        value: utf8
+      - name: binlog_format
+        value: ROW
+        applyMethod: pending-reboot
+      - name: server_audit_logging
+        value: '1'
+      - name: server_audit_logs_upload
+        value: '1'
+      - name: server_audit_events
+        value: CONNECT,QUERY_DCL,QUERY_DDL
+  providerConfigRef:
+    name: default
+
+---
+apiVersion: rds.aws.upbound.io/v1beta1
+kind: ParameterGroup
+metadata:
+  name: mysql-parameter-group
+spec:
+  forProvider:
+    region: us-east-1
+    family: aurora-mysql8.0
+    parameter:
+      - name: "max_connections"
+        value: "1000"
+      - name: "slow_query_log"
+        value: "1"
+      - name: "max_allowed_packet"
+        value: "134217728"
+      - name: "log_bin_trust_function_creators"
+        value: "1"
+      - name: "optimizer_switch"
+        value: "block_nested_loop=off"
+      - name: performance_schema
+        value: "1"
+        applyMethod: pending-reboot
+  providerConfigRef:
+    name: default
+
+---
+apiVersion: rds.aws.upbound.io/v1beta1
+kind: ClusterInstance
+metadata:
+  name: mysql-instances-0
+spec:
+  forProvider:
+    region: us-east-1
+    applyImmediately: false
+    autoMinorVersionUpgrade: false
+    clusterIdentifierRef:
+      name: mysql-cluster
+    engine: aurora-mysql
+    engineVersion: 8.0.mysql_aurora.3.03.1
+    copyTagsToSnapshot: true
+    instanceClass: db.r6g.xlarge
+    dbParameterGroupName: mysql-parameter-group
+    dbSubnetGroupNameRef: 
+      name: mysql-dbsubnetgroup-us-east-1
+    performanceInsightsEnabled: false
+  providerConfigRef:
+    name: default
+
+---
+apiVersion: rds.aws.upbound.io/v1beta1
+kind: Cluster
+metadata:
+  name: mysql-cluster
+spec:
+  forProvider:
+    allowMajorVersionUpgrade: false #Enable to allow major engine version upgrades when changing engine versions. Defaults to false.
+    availabilityZones:
+      - us-east-1a
+      - us-east-1b
+      - us-east-1c
+    applyImmediately: false #The target backtrack window, in seconds. Only available for aurora and aurora-mysql engines currently.  Defaults to 0. Must be between 0 and 259200 (72 hours)
+    backupRetentionPeriod: 3 # The days to retain backups for. Default 1
+    clusterMembers: # List of RDS Instances that are a part of this cluster
+      - mysql-instances-0
+    copyTagsToSnapshot: true # Copy all Cluster tags to snapshots. Default is false.
+    databaseName: composition #Name for an automatically created database on cluster creation.
+    dbClusterParameterGroupName: mysql-cluster-parameter-group #A cluster parameter group to associate with the cluster.
+    dbInstanceParameterGroupName: mysql-parameter-group # Instance parameter group to associate with all instances of the DB cluster. The db_instance_parameter_group_name parameter is only valid in combination with the allow_major_version_upgrade parameter.
+    dbSubnetGroupNameRef: 
+      name: mysql-dbsubnetgroup-us-east-1 #A DB subnet group to associate with this DB instance. 
+    deletionProtection: false
+    enabledCloudwatchLogsExports: #Set of log types to export to cloudwatch. If omitted, no logs will be exported. The following log types are supported: audit, error, general, slowquery, postgresql (PostgreSQL).
+      - audit
+      - error
+      - general
+      - slowquery
+    engine: aurora-mysql # The name of the database engine to be used for this DB cluster. Defaults to aurora. Valid Values: aurora, aurora-mysql, aurora-postgresql, mysql, postgres. (Note that mysql and postgres are Multi-AZ RDS clusters).
+    engineMode: provisioned # The database engine mode. Valid values: global (only valid for Aurora MySQL 1.21 and earlier), multimaster, parallelquery, provisioned, serverless. Defaults to: provisioned. See the RDS User Guide for limitations when using serverless.
+    engineVersion: 8.0.mysql_aurora.3.03.1 # The database engine version. Updating this argument results in an outage. See the Aurora MySQL and Aurora Postgres documentation for your configured engine to determine this value. For example with Aurora MySQL 2, a potential value for this argument is 5.7.mysql_aurora.2.03.2. The value can contain a partial version where supported by the API. The actual engine version used is returned in the attribute engine_version_actual, , see Attributes Reference below.
+    iamDatabaseAuthenticationEnabled: true # Specifies whether or not mappings of AWS Identity and Access Management (IAM) accounts to database accounts is enabled. Please see AWS Documentation for availability and limitations.
+    kmsKeyId: arn:aws:kms:us-east-1:568431661506:key/d8581ddd-3f1c-44b7-8e69-1dd61c1b5cbe #The ARN for the KMS encryption key. Default: managed `aws/rds` key. When specifying kms_key_id, storage_encrypted needs to be set to true.
+    masterUsername: dbadmin
+    masterPasswordSecretRef:
+      key: password
+      name: rmysql-dbadmin
+      namespace: upbound-system
+    networkType: IPV4
+    port: 3306
+    preferredBackupWindow: 12:00-13:00 #The daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter.Time in UTC.
+    preferredMaintenanceWindow: wed:10:00-wed:11:00 #The weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
+    region: us-east-1
+    storageEncrypted: true # Specifies whether the DB cluster is encrypted. The default is false for provisioned engine_mode and true for serverless engine_mode. When restoring an unencrypted snapshot_identifier, the kms_key_id argument must be provided to encrypt the restored cluster.
+    skipFinalSnapshot: true
+    snapshotIdentifier: arn:aws:rds:us-east-1:568431661506:cluster-snapshot:mysql-cluster-us-east-1-snapshot-v1
+    vpcSecurityGroupIdRefs:
+      - name: mysql-security-group
+  providerConfigRef:
+    name: default
