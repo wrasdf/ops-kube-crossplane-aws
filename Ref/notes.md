@@ -129,3 +129,18 @@ Last Transition Time:  2023-05-15T02:29:59Z
     status: "False"
     type: Synced
 ```
+
+```
+Events:
+  Type     Reason              Age                  From                                                             Message
+  ----     ------              ----                 ----                                                             -------
+  Warning  OfferClaim          10m                  offered/compositeresourcedefinition.apiextensions.crossplane.io  cannot add composite resource claim finalizer: cannot update object: Operation cannot be fulfilled on compositeresourcedefinitions.apiextensions.crossplane.io "xsg.aws.v1beta1.afterpay.cloud": the object has been modified; please apply your changes to the latest version and try again
+  Normal   OfferClaim          10m                  offered/compositeresourcedefinition.apiextensions.crossplane.io  waiting for composite resource claim CustomResourceDefinition to be established
+  Warning  OfferClaim          10m                  offered/compositeresourcedefinition.apiextensions.crossplane.io  cannot apply rendered composite resource claim CustomResourceDefinition: cannot create object: customresourcedefinitions.apiextensions.k8s.io "sgs.aws.v1beta1.afterpay.cloud" already exists
+  Normal   RenderCRD           10m (x5 over 10m)    offered/compositeresourcedefinition.apiextensions.crossplane.io  Rendered composite resource claim CustomResourceDefinition
+  Normal   ApplyClusterRoles   10m (x4 over 10m)    rbac/compositeresourcedefinition.apiextensions.crossplane.io     Applied RBAC ClusterRoles
+  Normal   OfferClaim          10m (x3 over 10m)    offered/compositeresourcedefinition.apiextensions.crossplane.io  Applied composite resource claim CustomResourceDefinition
+  Normal   OfferClaim          10m (x2 over 10m)    offered/compositeresourcedefinition.apiextensions.crossplane.io  (Re)started composite resource claim controller
+  Warning  EstablishComposite  9m8s (x12 over 10m)  defined/compositeresourcedefinition.apiextensions.crossplane.io  cannot apply rendered composite resource CustomResourceDefinition: existing object is not controlled by UID "873f64bb-afb2-4935-a604-510571cc0874"
+  Normal   RenderCRD           47s (x38 over 10m)   defined/compositeresourcedefinition.apiextensions.crossplane.io  Rendered composite resource CustomResourceDefinition
+```
