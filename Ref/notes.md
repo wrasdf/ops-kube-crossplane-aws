@@ -91,6 +91,10 @@ Last Transition Time:  2023-05-15T02:29:59Z
     Type:                  LastAsyncOperation
 ```
 
+```
+  Warning  EstablishComposite  21s                  defined/compositeresourcedefinition.apiextensions.crossplane.io  cannot apply rendered composite resource CustomResourceDefinition: cannot create object: CustomResourceDefinition.apiextensions.k8s.io "xsg.aws.v1beta1.afterpay.cloud" is invalid: metadata.name: Invalid value: "xsg.aws.v1beta1.afterpay.cloud": must be spec.names.plural+"."+spec.group
+```
+
 ### unknown Errors:
 
 ```
@@ -143,4 +147,9 @@ Events:
   Normal   OfferClaim          10m (x2 over 10m)    offered/compositeresourcedefinition.apiextensions.crossplane.io  (Re)started composite resource claim controller
   Warning  EstablishComposite  9m8s (x12 over 10m)  defined/compositeresourcedefinition.apiextensions.crossplane.io  cannot apply rendered composite resource CustomResourceDefinition: existing object is not controlled by UID "873f64bb-afb2-4935-a604-510571cc0874"
   Normal   RenderCRD           47s (x38 over 10m)   defined/compositeresourcedefinition.apiextensions.crossplane.io  Rendered composite resource CustomResourceDefinition
+```
+
+```
+  Warning  TerminateComposite  30s (x5 over 39s)   defined/compositeresourcedefinition.apiextensions.crossplane.io  cannot delete defined composite resources: xsg.aws.v1beta1.afterpay.cloud is forbidden: User "system:serviceaccount:upbound-system:crossplane" cannot deletecollection resource "xsg" in API group "aws.v1beta1.afterpay.cloud" at the cluster scope
+  Warning  RedactClaim         30s (x4 over 39s)   offered/compositeresourcedefinition.apiextensions.crossplane.io  cannot list defined composite resource claims: sg.aws.v1beta1.afterpay.cloud is forbidden: User "system:serviceaccount:upbound-system:crossplane" cannot list resource "sg" in API group "aws.v1beta1.afterpay.cloud" at the cluster scope
 ```

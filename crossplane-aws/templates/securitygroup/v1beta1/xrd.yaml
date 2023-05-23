@@ -2,7 +2,7 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: CompositeResourceDefinition
 metadata:
-  name: xsg.aws.v1beta1.afterpay.cloud
+  name: xsgs.aws.v1beta1.afterpay.cloud
   labels:
     version: v1beta1
 spec:
