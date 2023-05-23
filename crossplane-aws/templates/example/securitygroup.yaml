@@ -2,10 +2,11 @@
 apiVersion: aws.v1beta1.afterpay.cloud/v1beta1
 kind: SG
 metadata:
-  name: mysql-security-group-v2
+  name: mysql-security-group-v3
   namespace: pe
   labels:
     version: v1beta1
+    re-run: "true"
 spec:
   region: us-east-1
   vpcId: vpc-00890be277ac8ad8e
