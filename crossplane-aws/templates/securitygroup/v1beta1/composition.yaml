@@ -6,6 +6,7 @@ metadata:
   labels:
     version: v1beta1
     provider: aws
+    crossplane.io/xrd: xsgs.aws.v1beta1.afterpay.cloud
 spec:
   writeConnectionSecretsToNamespace: upbound-system
   compositeTypeRef:
@@ -23,7 +24,7 @@ spec:
         kind: SecurityGroup
         spec:
           forProvider:
-            name: composition-securitygroup
+            name: ""
             region: ""
             vpcId: ""
         patches:
@@ -41,7 +42,7 @@ spec:
             fromFieldPath: status.atProvider.id
             toFieldPath: status.share.securityGroupId
             policy:
-              fromFieldPath: Optional
+              fromFieldPath: Required
               
     - name: ingress-security-group-rule
       base:
