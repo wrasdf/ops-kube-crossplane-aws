@@ -5,6 +5,8 @@ metadata:
   name: xrmysql.aws.v1beta1.afterpay.cloud
   labels:
     version: v1beta1
+    provider: aws
+    cluster: regional
 spec:
   group: aws.v1beta1.afterpay.cloud
   names:
@@ -29,20 +31,17 @@ spec:
                 engineVersion:
                   type: string
                 parameterGroupFamily:
-                  type: string  
-                deletionProtection:
-                  type: boolean
-                dbClusterInstanceClass:
                   type: string
-                dbInstanceCount:
-                  type: number
+                replicas:
+                  type: array
+                  items:
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true  
               required:
                 - datbaseName
                 - engineVersion
                 - parameterGroupFamily
-                - deletionProtection
-                - dbClusterInstanceClass
-                - dbInstanceCount
+                - replicas
               x-kubernetes-preserve-unknown-fields: true
             status:
               type: object
@@ -50,9 +49,8 @@ spec:
                 share:
                   description: Share status between resources
                   type: object
-                  properties:
-                    clusterParameterGroupId:
-                      type: string
-                    parameterGroupId:
-                      type: string
-                  x-kubernetes-preserve-unknown-fields: true    
+                  x-kubernetes-preserve-unknown-fields: true
+                outputs:
+                  description: Freeform field containing status information for regional postgres
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true       

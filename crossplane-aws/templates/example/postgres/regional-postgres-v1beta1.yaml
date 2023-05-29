@@ -6,16 +6,19 @@ metadata:
   namespace: pe
   labels:
     version: v1beta1
+    serviceId: regional-postgres-deleteme-v2
 spec:
   datbaseName: postgres
   engineVersion: "14.6"
   parameterGroupFamily: aurora-postgresql14
   deletionProtection: false
-  dbClusterInstanceClass: db.r5.large
-  dbInstanceCount: 1
+  repicas:
+    - name: usea1
+      type: primary
+      dbInstanceCount: 1
+      dbClusterInstanceClass: db.r5.large  
   compositionSelector:
     matchLabels:
       version: v1beta1
       provider: aws
       cluster: regional
-      engine: postgres
