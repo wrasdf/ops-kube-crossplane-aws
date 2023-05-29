@@ -7,7 +7,6 @@ metadata:
     version: v1beta1
     provider: aws
     cluster: regional
-    engine: mysql
 spec:
   writeConnectionSecretsToNamespace: upbound-system
   compositeTypeRef:
@@ -19,7 +18,7 @@ spec:
         - fromFieldPath: metadata.labels
           toFieldPath: metadata.labels
   resources:
-    << $replica := .config.rds.replicas | coll.Pick .config.rds.primary ->>
+    << $replica := index .config.rds.replicas .config.rds.primary ->>
     - name: mysql-security-group
       base:
         apiVersion: ec2.aws.upbound.io/v1beta1
@@ -28,9 +27,7 @@ spec:
           forProvider:
             name: mysql-aurora-securitygroup
             region: << .config.aws.region >>
-            <<- range $value := $replica >>
-            vpcId: << $value.vpcId >>
-            <<- end >>
+            vpcId: << $replica.vpcId >>
         patches:
           - type: PatchSet
             patchSetName: metadata
@@ -51,21 +48,17 @@ spec:
             type: ingress
             region: << .config.aws.region >>
             cidrBlocks:
-            <<- range $value := $replica >>
-              <<- range $cidr := $value.dbIngressCIDRs >>
+            <<- range $cidr := $replica.dbIngressCIDRs >>
               - << $cidr >>
-              <<- end >>
             <<- end >>
             fromPort: << .config.rds.mysql.port >>
             toPort: << .config.rds.mysql.port >>
             protocol: tcp
+            securityGroupIdSelector: 
+              
         patches:
           - type: PatchSet
             patchSetName: metadata
-          - fromFieldPath: status.share.securityGroupId
-            toFieldPath: spec.forProvider.securityGroupId
-            policy:
-              fromFieldPath: Required      
 
     - name: mysql-egress-security-group-rule
       base:
@@ -233,10 +226,8 @@ spec:
           forProvider:
             allowMajorVersionUpgrade: << .config.rds.mysql.allowMajorVersionUpgrade >> #Enable to allow major engine version upgrades when changing engine versions. Defaults to false.
             availabilityZones:
-            <<- range $value := $replica >>
-              <<- range $zone := $value.availabilityZones >>
-              - << $zone >>
-              <<- end >>
+            <<- range $zone := $replica.availabilityZones >>
+            - << $zone >>
             <<- end >>
             applyImmediately: << .config.rds.mysql.applyImmediately >> #The target backtrack window, in seconds. Only available for aurora and aurora-mysql engines currently.  Defaults to 0. Must be between 0 and 259200 (72 hours)
             backupRetentionPeriod: << .config.rds.mysql.backupRetentionPeriod >> # The days to retain backups for. Default 1
@@ -257,9 +248,7 @@ spec:
             engineMode: << .config.rds.mysql.engineMode >> # The database engine mode. Valid values: global (only valid for Aurora MySQL 1.21 and earlier), multimaster, parallelquery, provisioned, serverless. Defaults to: provisioned. See the RDS User Guide for limitations when using serverless.
             engineVersion: "<< .config.rds.mysql.engineVersion >>" # The database engine version. Updating this argument results in an outage. See the Aurora MySQL and Aurora Postgres documentation for your configured engine to determine this value. For example with Aurora MySQL 2, a potential value for this argument is 5.7.mysql_aurora.2.03.2. The value can contain a partial version where supported by the API. The actual engine version used is returned in the attribute engine_version_actual, , see Attributes Reference below.
             iamDatabaseAuthenticationEnabled: true # Specifies whether or not mappings of AWS Identity and Access Management (IAM) accounts to database accounts is enabled. Please see AWS Documentation for availability and limitations.
-            <<- range $value := $replica >>
-            kmsKeyId: << $value.kmsKeyId >> #The ARN for the KMS encryption key. Default: managed `aws/rds` key. When specifying kms_key_id, storage_encrypted needs to be set to true.
-            <<- end >>
+            kmsKeyId: << $replica.kmsKeyId >> #The ARN for the KMS encryption key. Default: managed `aws/rds` key. When specifying kms_key_id, storage_encrypted needs to be set to true.
             masterUsername: << .config.rds.mysql.masterUsername >>
             masterPasswordSecretRef:
               key: << .config.rds.mysql.masterPasswordSecretRef.key >>

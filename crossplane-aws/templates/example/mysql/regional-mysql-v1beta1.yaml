@@ -2,22 +2,23 @@
 apiVersion: aws.v1beta1.afterpay.cloud/v1beta1
 kind: RMysql
 metadata:
-  name: regional-mysql-deleteme-v1
+  name: regional-mysql-deleteme-v8
   namespace: pe
   labels:
     version: v1beta1
-    rerun: "true"
+    serviceId: regional-mysql-deleteme-v8
 spec:
   datbaseName: mysql
   engineVersion: 8.0.mysql_aurora.3.03.1
   parameterGroupFamily: aurora-mysql8.0
   deletionProtection: false
-  dbClusterInstanceClass: db.r5.large
-  dbInstanceCount: 1
+  repicas:
+    - name: usea1
+      type: primary
+      dbInstanceCount: 1
+      dbClusterInstanceClass: db.r5.large  
   compositionSelector:
     matchLabels:
       version: v1beta1
       provider: aws
       cluster: regional
-      engine: mysql
-      spike: "true"

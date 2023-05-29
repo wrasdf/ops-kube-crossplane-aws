@@ -32,18 +32,17 @@ spec:
                   type: string  
                 deletionProtection:
                   type: boolean
-                dbClusterInstanceClass:
-                  type: string
-                dbInstanceCount:
-                  type: number
-              x-kubernetes-preserve-unknown-fields: true    
+                replicas:
+                  type: array
+                  items:
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true  
               required:
                 - datbaseName
                 - engineVersion
                 - parameterGroupFamily
-                - deletionProtection
-                - dbClusterInstanceClass
-                - dbInstanceCount
+                - replicas
+              x-kubernetes-preserve-unknown-fields: true  
             status:
               type: object
               description: Status defines the observed state
